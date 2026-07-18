@@ -124,6 +124,7 @@
   <span class="chip" id="tg-yellow">Yellow River</span>
   <span class="chip" id="tg-oldyellow">Old Yellow courses</span>
   <span class="chip" id="tg-han">Han River &amp; Qinling</span>
+  <span class="chip" id="tg-story">Story pins</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
 
@@ -455,8 +456,8 @@ function geoLabel(lat, lng, text, color) {
   return L.marker([lat, lng], { interactive: false, icon: L.divIcon({ className: "city-label",
     html: `<span style="font-size:13px;font-weight:700;color:${color}">${text}</span>`, iconSize: [230, 18], iconAnchor: [0, 9] }) });
 }
-function geoDot(lat, lng, tip) {
-  const m = L.circleMarker([lat, lng], { radius: 5, color: "#fff", weight: 1.5, fillColor: "#8a2e18", fillOpacity: 0.95 });
+function geoDot(lat, lng, tip, color) {
+  const m = L.circleMarker([lat, lng], { radius: 5, color: "#fff", weight: 1.5, fillColor: color || "#8a2e18", fillOpacity: 0.95 });
   m.bindTooltip(tip, { sticky: true, className: "prov-tip" });
   return m;
 }
@@ -506,6 +507,38 @@ const hanLayer = L.layerGroup([
   geoLabel(33.25, 105.9, "Hanzhong", "#8a2e18")
 ]);
 
+// Story pins: places emphasized during the tour — industry (purple), history/geopolitics (rust), culture/econ models (teal)
+const storyLayer = L.layerGroup([
+  geoDot(46.59, 125.00, "Daqing 大庆 — the oilfield that funded Mao-era China; the profitable SOE exception", "#4E2A84"),
+  geoLabel(46.75, 125.4, "Daqing (oil)", "#4E2A84"),
+  geoDot(41.88, 123.96, "Fushun 抚顺 — open-pit coal city east of Shenyang; mine exhausted", "#4E2A84"),
+  geoDot(41.80, 123.34, "Tiexi 铁西 — Shenyang's factory district; ground zero of the 1990s xiagang layoffs", "#4E2A84"),
+  geoDot(41.27, 123.17, "Liaoyang 辽阳 — March 2002: the biggest independent worker protest in PRC history", "#8a2e18"),
+  geoDot(40.01, 119.74, "Shanhaiguan 山海关 — the pass between North China and the Northeast; 'investment doesn't cross Shanhaiguan'", "#8a2e18"),
+  geoLabel(39.5, 118.5, "Shanhaiguan", "#8a2e18"),
+  geoDot(43.12, 131.87, "Vladivostok — Qing 'Haishenwai' until ceded to Russia in 1860; the Northeast's lost coastline", "#8a2e18"),
+  geoLabel(43.5, 131.0, "Vladivostok (lost 1860)", "#8a2e18"),
+  geoDot(42.91, 129.51, "Yanbian 延边 — Korean autonomous prefecture on the Tumen", "#0e8f7e"),
+  ...geoRiver([[53.34,121.5],[53.0,123.6],[52.35,126.0],[50.25,127.53],[49.4,129.4],[48.4,132.5],[48.27,134.7]],
+    "Amur River — 黑龙江 'Black Dragon River', the Russia border and Heilongjiang's namesake", { color: "#1d6fc0", weight: 3 }),
+  geoLabel(52.4, 122.3, "Amur / 黑龙江", "#1d6fc0"),
+  ...geoRiver([[41.99,128.08],[41.5,126.9],[40.9,126.0],[40.46,124.9],[40.12,124.39],[39.9,124.2]],
+    "Yalu River 鸭绿江 — the North Korea border; crossed by Chinese troops in 1950", { color: "#c2452d", weight: 2.5 }),
+  ...geoRiver([[42.02,128.1],[42.4,129.0],[42.86,130.0],[42.42,130.64]],
+    "Tumen River — last 15km are Russia/NK border, blocking China's sea access", { color: "#c2452d", weight: 2.5, dashArray: "6 5" }),
+  geoDot(31.905, 117.19, "Science Island 科学岛 — CAS campus: EAST 'artificial sun' tokamak, quantum labs; downstream of USTC", "#4E2A84"),
+  geoLabel(31.98, 116.55, "Science Island", "#4E2A84"),
+  geoDot(29.31, 120.08, "Yiwu 义乌 — the world's small-commodities wholesale bazaar; ~2M product types", "#4E2A84"),
+  geoLabel(28.95, 120.3, "Yiwu", "#4E2A84"),
+  geoDot(28.00, 120.65, "Wenzhou 温州 — family capitalism, informal credit circles; source of Europe's Chinese diaspora", "#0e8f7e"),
+  geoLabel(27.7, 120.85, "Wenzhou", "#0e8f7e"),
+  geoDot(31.52, 120.35, "Sunan 苏南 — Suzhou–Wuxi–Changzhou belt: government-as-landlord capitalism", "#0e8f7e"),
+  geoDot(30.63, 122.06, "Yangshan Deep-Water Port — the automated flagship terminal of the world's busiest container port", "#4E2A84"),
+  geoLabel(30.3, 121.75, "Yangshan Port", "#4E2A84"),
+  ...geoRiver([[30.89,121.93],[30.75,121.99],[30.63,122.06]],
+    "Donghai Bridge 东海大桥 — 32.5 km across open sea to Yangshan; drivable", { color: "#8a2e18", weight: 2.5 })
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -521,7 +554,8 @@ const overlays = {
   terrain: { layer: terrainLayer, chip: "tg-terrain" },
   yellow: { layer: yellowLayer, chip: "tg-yellow" },
   oldyellow: { layer: oldYellowLayer, chip: "tg-oldyellow" },
-  han: { layer: hanLayer, chip: "tg-han" }
+  han: { layer: hanLayer, chip: "tg-han" },
+  story: { layer: storyLayer, chip: "tg-story" }
 };
 function setOverlay(id, on) {
   const o = overlays[id];
