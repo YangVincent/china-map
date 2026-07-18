@@ -415,7 +415,7 @@ function flowArrowHead(pts, color) {
   const lat = p2[0] * Math.PI / 180;
   const ang = Math.atan2((p2[1] - p1[1]) * Math.cos(lat), p2[0] - p1[0]) * 180 / Math.PI;
   return L.marker(p2, { interactive: false, icon: L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7],
-    html: `<svg width="14" height="14" viewBox="-7 -7 14 14" style="transform:rotate(${90 - ang}deg)"><polygon points="0,-7 5,7 -5,7" fill="${color}"/></svg>` }) });
+    html: `<svg width="14" height="14" viewBox="-7 -7 14 14" style="transform:rotate(${ang}deg)"><polygon points="0,-7 5,7 -5,7" fill="${color}"/></svg>` }) });
 }
 const MIG_COLOR = "#6B4FBB";
 const MIG_HUBS = { prd: [22.8, 113.6], yrd: [31.1, 120.8], bj: [39.9, 116.4], sanya: [18.25, 109.5] };
@@ -570,7 +570,18 @@ const yangtzeLayer = L.layerGroup([
   ...geoRiver([[39.9,116.4],[39.1,117.2],[38.3,116.85],[36.45,115.98],[35.4,116.6],[34.26,117.2],[33.5,119.15],[32.4,119.4],[32.2,119.45],[31.3,120.6],[30.27,120.15]],
     "Grand Canal 大运河 — 1,800 km, dug by the 600s AD: the pipe that pumped southern rice to northern capitals", { color: "#0e8f7e", weight: 3, dashArray: "2 6" }),
   geoLabel(30.1, 109.3, "Yangtze 长江", "#1d6fc0"),
-  geoLabel(36.1, 114.6, "Grand Canal 大运河", "#0e8f7e")
+  geoLabel(36.1, 114.6, "Grand Canal 大运河", "#0e8f7e"),
+  tipLine([[29.56,106.55],[29.72,107.40],[30.20,107.95],[30.60,108.25],[30.81,108.41],[30.95,108.95],[31.02,109.52],[31.08,109.88],[31.04,110.34],[30.90,110.70],[30.83,110.98]],
+    { color: "#1d6fc0", weight: 9, opacity: 0.3 },
+    "Three Gorges reservoir — ~660 km of backed-up Yangtze, from the dam all the way to Chongqing; ocean-going barges now dock 2,400 km from the sea"),
+  geoDot(31.02, 109.53, "Qutang Gorge 瞿塘峡 — shortest and most dramatic; the scene on the ¥10 note; Baidicheng at its mouth", "#1d6fc0"),
+  geoDot(31.07, 109.90, "Wu Gorge 巫峡 — the deep middle gorge below Goddess Peak", "#1d6fc0"),
+  geoDot(30.94, 110.70, "Xiling Gorge 西陵峡 — longest and once deadliest for boatmen; the dam sits at its lower end", "#1d6fc0"),
+  geoLabel(31.35, 109.0, "the Three Gorges", "#1d6fc0"),
+  flowArrowHead([[29.56,106.55],[30.0,108.4]], "#1d6fc0"),
+  flowArrowHead([[30.35,112.9],[30.58,114.27]], "#1d6fc0"),
+  flowArrowHead([[31.0,118.3],[32.06,118.8]], "#1d6fc0"),
+  flowArrowHead([[31.9,120.5],[31.4,121.8]], "#1d6fc0")
 ]);
 
 // Treaty century (1839–1911): opium route, treaty ports & concessions, foreign military penetration

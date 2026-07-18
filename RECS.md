@@ -15,6 +15,7 @@ Mandarin difficulty key: 🟢 clear/standard-ish · 🟡 accented but followable
 - **Chaoshan food crawl (Chaozhou + Shantou)** — beef hotpot, marinated goose, midnight congee stalls, and gongfu tea in its birthplace; China's most obsessed-over regional food scene relative to its fame.
 - **Changsha night crawl** — black stinky tofu, kouwei xia (spicy crayfish), a Chayan Yuese 茶颜悦色 milk tea, and the Wenheyou 文和友 retro mega-plaza; the nightlife capital of inland China.
 - **Qiandongnan loop (Guizhou)** — Kaili sour-soup fish at the source, then Miao villages (Xijiang Qianhu) and Dong villages (Zhaoxing) for the silver headdresses and UNESCO grand songs. Pair with the **FAST telescope** visitor area and **Huangguoshu falls**.
+- **Three Gorges cruise (Chongqing → Yichang, ~4 days downstream)** — through Qutang, Wu, and Xiling gorges, ending with the dam's five-step ship locks or the giant ship lift. The classic river journey, now on a reservoir.
 
 ## Foundations / all-China
 
