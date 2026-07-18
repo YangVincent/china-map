@@ -2,7 +2,7 @@
 
 An interactive map for learning China's regions — what each is known for and how to think about them.
 
-**Live site:** https://yangvincent.github.io/china-map/
+**Live site:** https://yangvincent.com/china-map/
 
 - Real province boundaries (Leaflet + CARTO/OSM tiles), grouped into 9 macro-regions with a HUD info panel
 - Overlay toggles: Hu Line, Qinling–Huai line, internal migration flows, terrain hillshade, Yellow River + Taihang, historical Yellow River courses, Han River + Qinling
