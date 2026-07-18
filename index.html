@@ -128,6 +128,7 @@
   <span class="chip" id="tg-yangtze">Yangtze &amp; Canal</span>
   <span class="chip" id="tg-treaty">Treaty century</span>
   <span class="chip" id="tg-food">Cuisines</span>
+  <span class="chip" id="tg-tea">Gongfu tea</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
 
@@ -636,6 +637,24 @@ const cuisinesLayer = L.layerGroup(CUISINES.flatMap(c => [
   geoLabel(c[0] - 0.55, c[1] + 0.25, c[3], CUISINE_COLORS[c[2]])
 ]));
 
+// Gongfu tea: the three origins that converged on Chaozhou
+const teaLayer = L.layerGroup([
+  ...arrowPath(flowBezier([27.72,118.03],[23.72,116.68],0.15), "#6b4a2a",
+    "Wuyi rock oolongs 武夷岩茶 — the tea style gongfu brewing was built around, traded south along the Fujian coast"),
+  ...arrowPath(flowBezier([31.36,119.82],[23.76,116.72],0.12), "#8a2e18",
+    "Yixing 宜兴 clay teapots — the tiny unglazed pots (and Chaozhou's zhuni copies) that made short, concentrated infusions possible"),
+  ...arrowPath(flowBezier([24.10,116.80],[23.74,116.65],0.25), "#639922",
+    "Phoenix Mountain 凤凰山 dancong — Chaozhou's own single-bush oolong cultivars, hundreds of natural aroma types"),
+  geoDot(27.72, 118.03, "Wuyishan 武夷山 — rock-tea (yancha) terroir: the Da Hong Pao cliffs", "#6b4a2a"),
+  geoLabel(27.95, 118.3, "Wuyi rock tea", "#6b4a2a"),
+  geoDot(31.36, 119.82, "Yixing 宜兴 — purple-clay (zisha) teapot capital, by Lake Tai", "#8a2e18"),
+  geoLabel(31.6, 120.05, "Yixing pots", "#8a2e18"),
+  geoDot(24.10, 116.80, "Phoenix Mountain 凤凰山 — dancong single-bush oolongs: honey-orchid, almond, ginger flower...", "#639922"),
+  geoLabel(24.3, 117.05, "Phoenix dancong", "#639922"),
+  geoDot(23.66, 116.62, "Chaozhou 潮州 — where the three met: tiny pots, packed leaf, seconds-long infusions, three cups", "#0e8f7e"),
+  geoLabel(23.3, 116.85, "Chaozhou: gongfu tea", "#0e8f7e")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -655,7 +674,8 @@ const overlays = {
   story: { layer: storyLayer, chip: "tg-story" },
   yangtze: { layer: yangtzeLayer, chip: "tg-yangtze" },
   treaty: { layer: treatyLayer, chip: "tg-treaty" },
-  food: { layer: cuisinesLayer, chip: "tg-food" }
+  food: { layer: cuisinesLayer, chip: "tg-food" },
+  tea: { layer: teaLayer, chip: "tg-tea" }
 };
 function setOverlay(id, on) {
   const o = overlays[id];
