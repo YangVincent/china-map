@@ -129,7 +129,7 @@
 </div>
 
 <div class="hud" id="legend">
-  <div class="lg-title">Nine ways to cut China</div>
+  <div class="lg-title">Eight ways to cut China</div>
   <div id="legend-rows"></div>
 </div>
 
@@ -235,18 +235,7 @@ const REGIONS = {
       "Hainan: China's Hawaii — beaches, duty-free shopping"
     ],
     think: "Cantonese- and Hokkien-speaking, outward-facing, first to get rich under reform. If you've met overseas Chinese communities, their roots are probably here.",
-    provinces: [350000, 440000, 450000, 460000, 810000, 820000] },
-  taiwan: { name: "Taiwan", zh: "台湾 Táiwān", color: "#A8A29B",
-    tagline: "Governed separately since 1949 — and the region's biggest flashpoint.",
-    bullets: [
-      "Self-governing as the Republic of China since the Nationalists retreated here in 1949; PRC claims it",
-      "TSMC makes ~90% of the world's most advanced chips — the 'silicon shield'",
-      "Vibrant democracy since the 1990s; distinct identity increasingly separate from the mainland",
-      "Night markets, bubble tea, and preserved traditional culture (traditional characters)",
-      "Central to US–China tension: the most plausible great-power conflict trigger"
-    ],
-    think: "Shown here for geography — in practice a separate political and economic system, and the single most important variable in US–China relations.",
-    provinces: [710000] }
+    provinces: [350000, 440000, 450000, 460000, 810000, 820000] }
 };
 
 const PROV = {
@@ -281,7 +270,6 @@ const PROV = {
   630000: { en: "Qinghai", region: "northwest", blurb: "Plateau lakes and salt flats (lithium); source region of the Yellow and Yangtze rivers." },
   640000: { en: "Ningxia", region: "northwest", blurb: "Small Hui Muslim autonomous region; goji berries; emerging wine country." },
   650000: { en: "Xinjiang", region: "northwest", blurb: "Uyghur homeland; cotton, oil, gas; Kashgar's Silk Road old town; geopolitical flashpoint." },
-  710000: { en: "Taiwan", region: "taiwan", blurb: "Governed separately as the ROC since 1949; TSMC and the world's advanced chips." },
   810000: { en: "Hong Kong", region: "south", blurb: "Global financial center; common law; 'one country, two systems' since 1997." },
   820000: { en: "Macau", region: "south", blurb: "World's largest casino hub; Portuguese heritage; handed back in 1999." }
 };
@@ -317,7 +305,6 @@ const CITIES = [
   { name: "Guilin", zh: "桂林", lat: 25.27, lng: 110.29, tier: 3, region: "south", blurb: "The karst-peaks-and-river landscape from every Chinese painting." },
   { name: "Sanya", zh: "三亚", lat: 18.25, lng: 109.51, tier: 3, region: "south", blurb: "Tropical beach resort — 'China's Hawaii'." },
   { name: "Macau", zh: "澳门", lat: 22.20, lng: 113.55, tier: 3, region: "south", blurb: "Casino revenue several times Las Vegas; Portuguese egg tarts." },
-  { name: "Taipei", zh: "台北", lat: 25.03, lng: 121.57, tier: 2, region: "taiwan", blurb: "Taiwan's capital; night markets; National Palace Museum treasures." },
   { name: "Hefei", zh: "合肥", lat: 31.82, lng: 117.23, tier: 3, region: "delta", blurb: "The city government that VC-invested its way into EVs and quantum." }
 ];
 
@@ -349,11 +336,11 @@ let terrainOn = false;
 function baseStyle(adcode) {
   const meta = PROV[adcode];
   const color = meta ? REGIONS[meta.region].color : "#999";
-  return { color: "#ffffff", weight: 1, fillColor: color, fillOpacity: terrainOn ? 0.16 : 0.38,
-           dashArray: meta && meta.region === "taiwan" ? "4 3" : null };
+  return { color: "#ffffff", weight: 1, fillColor: color, fillOpacity: terrainOn ? 0.16 : 0.38 };
 }
 
 const geoLayer = L.geoJSON(CHINA_GEOJSON, {
+  filter: f => f.properties.adcode !== 710000,
   style: f => baseStyle(f.properties.adcode),
   onEachFeature: (f, layer) => {
     const adcode = f.properties.adcode;
