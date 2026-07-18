@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>China, region by region</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    --panel-bg: rgba(255,255,255,0.92);
+    --panel-border: rgba(0,0,0,0.10);
+    --text: #1c1c1c;
+    --text-2: #5a5a56;
+    --accent: #b3541e;
+  }
+  body.dark {
+    --panel-bg: rgba(24,24,26,0.92);
+    --panel-border: rgba(255,255,255,0.14);
+    --text: #ececea;
+    --text-2: #a4a49e;
+    --accent: #e8956d;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--text); }
+  #map { position: absolute; inset: 0; background: #aad3df; }
+  body.dark #map { background: #10151b; }
+
+  .hud {
+    position: absolute; z-index: 1000;
+    background: var(--panel-bg); border: 1px solid var(--panel-border);
+    border-radius: 12px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  }
+
+  #header { top: 14px; left: 14px; padding: 10px 16px; max-width: 300px; }
+  #header h1 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+  #header p { margin: 3px 0 0; font-size: 12px; color: var(--text-2); }
+
+  #toggles { top: 14px; right: 14px; padding: 8px 10px; display: flex; gap: 6px; flex-wrap: wrap; max-width: 340px; }
+  .chip {
+    font-size: 12px; padding: 5px 10px; border-radius: 999px; cursor: pointer; user-select: none;
+    border: 1px solid var(--panel-border); color: var(--text-2); background: transparent; white-space: nowrap;
+  }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip:hover { border-color: var(--accent); }
+
+  #legend { bottom: 24px; left: 14px; padding: 10px 12px; max-width: 240px; }
+  #legend .lg-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin-bottom: 6px; }
+  .lg-row { display: flex; align-items: center; gap: 8px; padding: 3px 4px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .lg-row:hover { background: rgba(128,128,128,0.14); }
+  .lg-row.active { background: rgba(128,128,128,0.20); font-weight: 600; }
+  .lg-dot { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+
+  #panel {
+    top: 14px; right: 14px; width: 330px; max-height: calc(100% - 120px);
+    overflow-y: auto; padding: 16px 18px; display: none;
+  }
+  #panel.visible { display: block; }
+  #panel .close { position: absolute; top: 10px; right: 12px; cursor: pointer; color: var(--text-2); font-size: 16px; line-height: 1; }
+  #panel .kicker { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
+  #panel h2 { margin: 0 0 2px; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+  #panel .zh { font-size: 13px; color: var(--text-2); margin-bottom: 10px; }
+  #panel .tagline { font-size: 14px; font-style: italic; color: var(--text-2); margin: 0 0 10px; }
+  #panel ul { margin: 6px 0 12px; padding-left: 18px; }
+  #panel li { font-size: 13px; line-height: 1.45; margin-bottom: 5px; }
+  #panel .think {
+    font-size: 13px; line-height: 1.45; padding: 9px 11px; border-radius: 8px;
+    background: rgba(179,84,30,0.10); border-left: 3px solid var(--accent); margin-bottom: 12px;
+  }
+  #panel .sect { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin: 12px 0 6px; }
+  .citychip {
+    display: inline-block; font-size: 12px; padding: 3px 9px; margin: 0 4px 6px 0;
+    border: 1px solid var(--panel-border); border-radius: 999px; cursor: pointer;
+  }
+  .citychip:hover { border-color: var(--accent); color: var(--accent); }
+  #panel .backlink { font-size: 12px; color: var(--accent); cursor: pointer; margin-top: 4px; display: inline-block; }
+
+  #caption {
+    bottom: 24px; left: 50%; transform: translateX(-50%);
+    max-width: 520px; padding: 10px 16px; display: none; font-size: 14px; line-height: 1.5;
+  }
+  #caption.visible { display: block; }
+  #caption .who { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+
+  .city-label { background: none; border: none; box-shadow: none; }
+  .city-label span {
+    font-size: 11px; font-weight: 600; color: #333; text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff;
+  }
+  body.dark .city-label span { color: #eee; text-shadow: 0 0 3px #000, 0 0 3px #000, 0 0 3px #000; }
+
+  .pulse-marker { background: none; border: none; }
+  .pulse-ring {
+    width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--accent);
+    animation: pulse 1.4s ease-out infinite; position: absolute; top: -18px; left: -18px;
+  }
+  .pulse-core { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); position: absolute; top: -5px; left: -5px; }
+  .pulse-tag {
+    position: absolute; top: 10px; left: 12px; white-space: nowrap; font-size: 12px; font-weight: 600;
+    background: var(--accent); color: #fff; padding: 3px 8px; border-radius: 6px;
+  }
+  @keyframes pulse {
+    0% { transform: scale(0.4); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  .leaflet-tooltip.prov-tip { font-size: 12px; padding: 3px 8px; }
+  .line-label { font-size: 12px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div class="hud" id="header">
+  <h1>China, region by region</h1>
+  <p>Click a region, province, or city dot — then ask Claude about it. Claude can see your clicks and drive this map.</p>
+</div>
+
+<div class="hud" id="toggles">
+  <span class="chip" id="tg-hu">Hu Line</span>
+  <span class="chip" id="tg-ns">North–South line</span>
+  <span class="chip" id="tg-mig">Migration flows</span>
+  <span class="chip" id="tg-terrain">Terrain</span>
+  <span class="chip" id="tg-yellow">Yellow River</span>
+  <span class="chip" id="tg-oldyellow">Old Yellow courses</span>
+  <span class="chip" id="tg-han">Han River &amp; Qinling</span>
+  <span class="chip" id="tg-reset">Reset view</span>
+</div>
+
+<div class="hud" id="legend">
+  <div class="lg-title">Nine ways to cut China</div>
+  <div id="legend-rows"></div>
+</div>
+
+<div class="hud" id="panel">
+  <span class="close" onclick="closePanel()">✕</span>
+  <div id="panel-body"></div>
+</div>
+
+<div class="hud" id="caption">
+  <div class="who">Claude</div>
+  <div id="caption-text"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="china-geo.js"></script>
+<script>
+// ---------- Content ----------
+const REGIONS = {
+  northeast: { name: "Northeast", zh: "东北 Dōngběi", color: "#4E79A7",
+    tagline: "China's rust belt.",
+    bullets: [
+      "State-owned heavy industry from the planned-economy era — steel, machinery, oil",
+      "Fertile black-soil farmland: corn, soybeans, rice",
+      "Long, brutal winters; Harbin's famous ice festival and Russian architecture",
+      "Population decline and youth outmigration — China's fastest-aging region",
+      "Blunt, warm, comedic culture — a huge share of China's comedians are Dongbei-ren"
+    ],
+    think: "Think US Rust Belt: industrialized first under state planning (and Japanese-occupied Manchuria before that), declined first. Proud, funny, shrinking.",
+    provinces: [210000, 220000, 230000] },
+  north: { name: "North China", zh: "华北 Huáběi", color: "#E8B117",
+    tagline: "The political and civilizational heartland.",
+    bullets: [
+      "Beijing: capital, politics, elite universities, and a top-two tech hub",
+      "Hebei and Tianjin: the steel-and-port belt wrapped around the capital",
+      "Shanxi: coal country; Inner Mongolia: coal, rare earths, grasslands",
+      "Shandong: Confucius' homeland, Qingdao beer, farming + industry heavyweight",
+      "Henan: cradle of Chinese civilization (Luoyang, Kaifeng) — now 'iPhone city' Zhengzhou"
+    ],
+    think: "Wheat, noodles, and standard Mandarin. Think Washington DC plus its industrial and agricultural hinterland — power radiates from Beijing.",
+    provinces: [110000, 120000, 130000, 140000, 150000, 370000, 410000] },
+  northwest: { name: "Northwest", zh: "西北 Xīběi", color: "#C08552",
+    tagline: "The Silk Road frontier.",
+    bullets: [
+      "Xi'an: ancient capital Chang'an, Terracotta Army — the gateway to the region",
+      "Gansu's Hexi Corridor: the historic Silk Road bottleneck; Dunhuang cave art",
+      "Xinjiang: Uyghur homeland; cotton, oil, gas — and a major geopolitical flashpoint",
+      "Qinghai: plateau salt lakes now mined for lithium",
+      "Ningxia: small Hui Muslim region; goji berries and surprising wineries"
+    ],
+    think: "Think the American West: vast, dry, resource-rich, frontier history, and contested politics at the edges.",
+    provinces: [610000, 620000, 630000, 640000, 650000] },
+  tibet: { name: "Tibet", zh: "西藏 Xīzàng", color: "#8C6BB1",
+    tagline: "The high plateau.",
+    bullets: [
+      "Average elevation ~4,500m — the 'roof of the world'",
+      "Lhasa: Potala Palace, heart of Tibetan Buddhism",
+      "Extremely sparse population; foreign visitors need special permits",
+      "Headwaters of Asia's great rivers — Yangtze, Mekong, Brahmaputra ('Asia's water tower')",
+      "Politically sensitive since 1950s annexation; Dalai Lama in exile since 1959"
+    ],
+    think: "Culturally and geographically a different world from lowland China — closer to the Himalayas than to Beijing in every sense but the political one.",
+    provinces: [540000] },
+  southwest: { name: "Southwest", zh: "西南 Xīnán", color: "#59A14F",
+    tagline: "Spice, mountains, and the inland boom.",
+    bullets: [
+      "Chengdu: pandas, Sichuan pepper, teahouse culture — China's most livable big city",
+      "Chongqing: mountain megacity of ~32M; hotpot; makes a big share of the world's laptops",
+      "Yunnan: 25+ ethnic groups, Dali and Lijiang, coffee country, borders Southeast Asia",
+      "Guizhou: was the poorest province, now a data-center hub (cool climate, cheap power) — and home of Moutai",
+      "Distinct identity: spicy food, mahjong, slower pace"
+    ],
+    think: "Where China's growth moved when coastal labor got expensive. The most distinct regional food-and-lifestyle identity in the country.",
+    provinces: [500000, 510000, 520000, 530000] },
+  central: { name: "Central", zh: "华中 Huázhōng", color: "#F28E2B",
+    tagline: "The crossroads.",
+    bullets: [
+      "Wuhan: where the Yangtze meets the north–south rail axis; ~1M university students; autos and optics",
+      "Hunan: Mao's home province; food as spicy as Sichuan's but different (dry heat vs numbing)",
+      "Changsha: TV entertainment capital, famous nightlife and milk-tea culture",
+      "Jiangxi: Jingdezhen porcelain — 1,000 years as the world's ceramics capital; early Communist bases",
+      "Rice, rivers, lakes — the agricultural core of the south"
+    ],
+    think: "Flyover country that's catching up fast — every high-speed rail line seems to pass through Wuhan or Changsha.",
+    provinces: [420000, 430000, 360000] },
+  delta: { name: "Yangtze Delta", zh: "长三角 Chángsānjiǎo", color: "#E15759",
+    tagline: "The economic engine.",
+    bullets: [
+      "~1/4 of China's GDP in ~4% of its land",
+      "Shanghai: finance, trade, China's most international city",
+      "Jiangsu (Suzhou, Nanjing): advanced manufacturing atop the old wealthy 'Jiangnan' heartland",
+      "Zhejiang (Hangzhou, Ningbo, Yiwu, Wenzhou): China's private-entrepreneurship culture; Alibaba",
+      "Anhui: the underdog that bet big on tech — Hefei's EV and quantum plays"
+    ],
+    think: "Think the US Northeast corridor or Greater Tokyo: dense, rich, sophisticated, historically the cultured merchant heartland (Jiangnan).",
+    provinces: [310000, 320000, 330000, 340000] },
+  south: { name: "South Coast", zh: "华南 Huánán", color: "#76B7B2",
+    tagline: "The gateway — first to open, most connected to the world.",
+    bullets: [
+      "Pearl River Delta: Shenzhen (hardware Silicon Valley — Huawei, Tencent, DJI), Guangzhou (trade), Dongguan/Foshan (factory belt)",
+      "Hong Kong: global finance under 'one country, two systems'; Macau: world's largest casino hub",
+      "Fujian: tea, tulou roundhouses, and the ancestral homeland of much of the Chinese diaspora",
+      "Guangxi: Guilin's karst peaks — the classic Chinese landscape painting, in real life",
+      "Hainan: China's Hawaii — beaches, duty-free shopping"
+    ],
+    think: "Cantonese- and Hokkien-speaking, outward-facing, first to get rich under reform. If you've met overseas Chinese communities, their roots are probably here.",
+    provinces: [350000, 440000, 450000, 460000, 810000, 820000] },
+  taiwan: { name: "Taiwan", zh: "台湾 Táiwān", color: "#A8A29B",
+    tagline: "Governed separately since 1949 — and the region's biggest flashpoint.",
+    bullets: [
+      "Self-governing as the Republic of China since the Nationalists retreated here in 1949; PRC claims it",
+      "TSMC makes ~90% of the world's most advanced chips — the 'silicon shield'",
+      "Vibrant democracy since the 1990s; distinct identity increasingly separate from the mainland",
+      "Night markets, bubble tea, and preserved traditional culture (traditional characters)",
+      "Central to US–China tension: the most plausible great-power conflict trigger"
+    ],
+    think: "Shown here for geography — in practice a separate political and economic system, and the single most important variable in US–China relations.",
+    provinces: [710000] }
+};
+
+const PROV = {
+  110000: { en: "Beijing", region: "north", blurb: "Capital. Politics, elite universities (Tsinghua, PKU), Zhongguancun tech." },
+  120000: { en: "Tianjin", region: "north", blurb: "Beijing's port city; treaty-port architecture; heavy industry." },
+  130000: { en: "Hebei", region: "north", blurb: "The steel belt wrapped around Beijing; produces more steel than any country except China itself." },
+  140000: { en: "Shanxi", region: "north", blurb: "Coal country; ancient merchant banking (Pingyao); vinegar and noodles." },
+  150000: { en: "Inner Mongolia", region: "north", blurb: "Coal, rare earths (Baotou), dairy (Mengniu, Yili), grasslands and desert." },
+  210000: { en: "Liaoning", region: "northeast", blurb: "Heavy industry (Shenyang) plus Dalian — port, software, the Northeast's most livable city." },
+  220000: { en: "Jilin", region: "northeast", blurb: "Autos — FAW in Changchun; Korean border; ski country (Changbaishan)." },
+  230000: { en: "Heilongjiang", region: "northeast", blurb: "Black-soil breadbasket; Harbin's ice festival and Russian heritage; Russia border." },
+  310000: { en: "Shanghai", region: "delta", blurb: "Finance and trade; China's most international city; the Bund vs Pudong skyline." },
+  320000: { en: "Jiangsu", region: "delta", blurb: "Advanced manufacturing; Suzhou's gardens and fabs; wealthy since imperial times." },
+  330000: { en: "Zhejiang", region: "delta", blurb: "Entrepreneur culture — Alibaba (Hangzhou), Yiwu wholesale, Wenzhou merchants." },
+  340000: { en: "Anhui", region: "delta", blurb: "Underdog betting on tech: Hefei's EV and quantum plays. Huangshan (Yellow Mountain)." },
+  350000: { en: "Fujian", region: "south", blurb: "Tea, tulou roundhouses, diaspora homeland; faces Taiwan across the strait." },
+  360000: { en: "Jiangxi", region: "central", blurb: "Jingdezhen porcelain; early Communist revolutionary bases (Jinggangshan)." },
+  370000: { en: "Shandong", region: "north", blurb: "Confucius' homeland; Qingdao beer; agriculture and industry heavyweight." },
+  410000: { en: "Henan", region: "north", blurb: "Cradle of Chinese civilization (Luoyang, Kaifeng); ~100M people; Zhengzhou = iPhone city." },
+  420000: { en: "Hubei", region: "central", blurb: "Wuhan: Yangtze crossroads, ~1M students, autos and optics. Three Gorges Dam." },
+  430000: { en: "Hunan", region: "central", blurb: "Mao's home province; ferociously spicy food; Changsha's TV and nightlife scene." },
+  440000: { en: "Guangdong", region: "south", blurb: "Factory of the world; Cantonese culture; Shenzhen's hardware-tech ecosystem." },
+  450000: { en: "Guangxi", region: "south", blurb: "Guilin karst scenery; Zhuang minority; border trade with Vietnam/ASEAN." },
+  460000: { en: "Hainan", region: "south", blurb: "China's Hawaii: beaches, duty-free, and the Boao Forum." },
+  500000: { en: "Chongqing", region: "southwest", blurb: "Mountain megacity (~32M in the municipality); hotpot; laptop manufacturing." },
+  510000: { en: "Sichuan", region: "southwest", blurb: "Pandas, Sichuan pepper, teahouses; Chengdu is the laid-back tech-and-gaming hub." },
+  520000: { en: "Guizhou", region: "southwest", blurb: "Karst mountains; Moutai liquor; unlikely data-center hub (cool, cheap power)." },
+  530000: { en: "Yunnan", region: "southwest", blurb: "25+ ethnic groups; Dali, Lijiang, Xishuangbanna; coffee; borders Myanmar/Laos/Vietnam." },
+  540000: { en: "Tibet", region: "tibet", blurb: "High plateau; Lhasa and the Potala Palace; permits required for foreigners." },
+  610000: { en: "Shaanxi", region: "northwest", blurb: "Xi'an — ancient capital Chang'an, Terracotta Army, and the start of the Silk Road." },
+  620000: { en: "Gansu", region: "northwest", blurb: "The Hexi Corridor — Silk Road bottleneck; Dunhuang's cave art; Lanzhou beef noodles." },
+  630000: { en: "Qinghai", region: "northwest", blurb: "Plateau lakes and salt flats (lithium); source region of the Yellow and Yangtze rivers." },
+  640000: { en: "Ningxia", region: "northwest", blurb: "Small Hui Muslim autonomous region; goji berries; emerging wine country." },
+  650000: { en: "Xinjiang", region: "northwest", blurb: "Uyghur homeland; cotton, oil, gas; Kashgar's Silk Road old town; geopolitical flashpoint." },
+  710000: { en: "Taiwan", region: "taiwan", blurb: "Governed separately as the ROC since 1949; TSMC and the world's advanced chips." },
+  810000: { en: "Hong Kong", region: "south", blurb: "Global financial center; common law; 'one country, two systems' since 1997." },
+  820000: { en: "Macau", region: "south", blurb: "World's largest casino hub; Portuguese heritage; handed back in 1999." }
+};
+
+const CITIES = [
+  { name: "Beijing", zh: "北京", lat: 39.90, lng: 116.40, tier: 1, region: "north", blurb: "Capital: politics, culture, and a top-two tech scene." },
+  { name: "Shanghai", zh: "上海", lat: 31.23, lng: 121.47, tier: 1, region: "delta", blurb: "Finance and trade; the most international city in China." },
+  { name: "Shenzhen", zh: "深圳", lat: 22.54, lng: 114.06, tier: 1, region: "south", blurb: "Fishing village → 18M-person hardware Silicon Valley in 40 years." },
+  { name: "Guangzhou", zh: "广州", lat: 23.13, lng: 113.26, tier: 1, region: "south", blurb: "2,000 years of trade; Canton Fair; heart of Cantonese culture." },
+  { name: "Chengdu", zh: "成都", lat: 30.66, lng: 104.06, tier: 1, region: "southwest", blurb: "Pandas, teahouses, food — and a serious tech/gaming hub." },
+  { name: "Chongqing", zh: "重庆", lat: 29.56, lng: 106.55, tier: 1, region: "southwest", blurb: "Cyberpunk mountain megacity; hotpot; wartime capital." },
+  { name: "Hangzhou", zh: "杭州", lat: 30.27, lng: 120.15, tier: 1, region: "delta", blurb: "West Lake beauty + Alibaba; 'paradise on earth' per the old saying." },
+  { name: "Xi'an", zh: "西安", lat: 34.34, lng: 108.94, tier: 1, region: "northwest", blurb: "Ancient capital for 13 dynasties; Terracotta Army; Silk Road start." },
+  { name: "Wuhan", zh: "武汉", lat: 30.59, lng: 114.30, tier: 1, region: "central", blurb: "Yangtze crossroads; ~1M university students; 'Chicago of China'." },
+  { name: "Hong Kong", zh: "香港", lat: 22.32, lng: 114.17, tier: 1, region: "south", blurb: "Global finance hub under 'one country, two systems'." },
+  { name: "Tianjin", zh: "天津", lat: 39.13, lng: 117.20, tier: 2, region: "north", blurb: "Beijing's port; European treaty-port architecture." },
+  { name: "Nanjing", zh: "南京", lat: 32.06, lng: 118.80, tier: 2, region: "delta", blurb: "Multiple-time capital; 1937 massacre memorial; universities." },
+  { name: "Suzhou", zh: "苏州", lat: 31.30, lng: 120.58, tier: 2, region: "delta", blurb: "Classical gardens and canals next to huge chip/manufacturing parks." },
+  { name: "Qingdao", zh: "青岛", lat: 36.07, lng: 120.38, tier: 2, region: "north", blurb: "German colonial past → Tsingtao beer; sailing city." },
+  { name: "Zhengzhou", zh: "郑州", lat: 34.75, lng: 113.62, tier: 2, region: "north", blurb: "Rail hub; Foxconn's 'iPhone city'." },
+  { name: "Changsha", zh: "长沙", lat: 28.23, lng: 112.94, tier: 2, region: "central", blurb: "TV entertainment capital; famously fun nightlife; Mao studied here." },
+  { name: "Harbin", zh: "哈尔滨", lat: 45.80, lng: 126.53, tier: 2, region: "northeast", blurb: "Ice festival; Russian architecture; -20°C winters." },
+  { name: "Shenyang", zh: "沈阳", lat: 41.80, lng: 123.43, tier: 2, region: "northeast", blurb: "Manchu imperial palace; heavy-industry capital of the Northeast." },
+  { name: "Dalian", zh: "大连", lat: 38.91, lng: 121.61, tier: 2, region: "northeast", blurb: "Port, software outsourcing, and the Northeast's nicest coastline." },
+  { name: "Kunming", zh: "昆明", lat: 25.04, lng: 102.71, tier: 2, region: "southwest", blurb: "'Spring city' — eternal mild weather; gateway to Yunnan and SE Asia." },
+  { name: "Guiyang", zh: "贵阳", lat: 26.65, lng: 106.63, tier: 2, region: "southwest", blurb: "Data-center boomtown in the karst mountains." },
+  { name: "Lanzhou", zh: "兰州", lat: 36.06, lng: 103.83, tier: 2, region: "northwest", blurb: "Yellow River city; the beef-noodle capital; Hexi Corridor gateway." },
+  { name: "Ürümqi", zh: "乌鲁木齐", lat: 43.83, lng: 87.62, tier: 2, region: "northwest", blurb: "Farthest big city from any ocean on Earth; Xinjiang's capital." },
+  { name: "Kashgar", zh: "喀什", lat: 39.47, lng: 75.99, tier: 3, region: "northwest", blurb: "Ancient Silk Road oasis; Uyghur old town; closer to Baghdad than Beijing." },
+  { name: "Dunhuang", zh: "敦煌", lat: 40.14, lng: 94.66, tier: 3, region: "northwest", blurb: "Mogao Caves — 1,000 years of Buddhist art in the desert." },
+  { name: "Lhasa", zh: "拉萨", lat: 29.65, lng: 91.14, tier: 2, region: "tibet", blurb: "Potala Palace; 3,650m elevation; heart of Tibetan Buddhism." },
+  { name: "Xiamen", zh: "厦门", lat: 24.48, lng: 118.09, tier: 2, region: "south", blurb: "Pleasant coastal city; Gulangyu island; faces Taiwan." },
+  { name: "Guilin", zh: "桂林", lat: 25.27, lng: 110.29, tier: 3, region: "south", blurb: "The karst-peaks-and-river landscape from every Chinese painting." },
+  { name: "Sanya", zh: "三亚", lat: 18.25, lng: 109.51, tier: 3, region: "south", blurb: "Tropical beach resort — 'China's Hawaii'." },
+  { name: "Macau", zh: "澳门", lat: 22.20, lng: 113.55, tier: 3, region: "south", blurb: "Casino revenue several times Las Vegas; Portuguese egg tarts." },
+  { name: "Taipei", zh: "台北", lat: 25.03, lng: 121.57, tier: 2, region: "taiwan", blurb: "Taiwan's capital; night markets; National Palace Museum treasures." },
+  { name: "Hefei", zh: "合肥", lat: 31.82, lng: 117.23, tier: 3, region: "delta", blurb: "The city government that VC-invested its way into EVs and quantum." }
+];
+
+// ---------- Map setup ----------
+const dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+if (dark) document.body.classList.add("dark");
+
+const map = L.map("map", { zoomSnap: 0.25, zoomControl: false, worldCopyJump: true });
+L.control.zoom({ position: "bottomright" }).addTo(map);
+map.setView([36.5, 104.5], 4.25);
+
+L.tileLayer(
+  dark ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+       : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+  { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>', subdomains: "abcd", maxZoom: 12 }
+).addTo(map);
+
+// ---------- State + event log ----------
+window.__events = [];
+function logEvent(kind, name) {
+  window.__events.push({ ts: new Date().toISOString(), kind, name });
+  if (window.__events.length > 80) window.__events.shift();
+}
+
+const provLayers = {};   // adcode -> leaflet layer
+let activeRegion = null;
+let terrainOn = false;
+
+function baseStyle(adcode) {
+  const meta = PROV[adcode];
+  const color = meta ? REGIONS[meta.region].color : "#999";
+  return { color: "#ffffff", weight: 1, fillColor: color, fillOpacity: terrainOn ? 0.16 : 0.38,
+           dashArray: meta && meta.region === "taiwan" ? "4 3" : null };
+}
+
+const geoLayer = L.geoJSON(CHINA_GEOJSON, {
+  style: f => baseStyle(f.properties.adcode),
+  onEachFeature: (f, layer) => {
+    const adcode = f.properties.adcode;
+    const meta = PROV[adcode];
+    if (!meta) return;
+    provLayers[adcode] = layer;
+    layer.bindTooltip(`${meta.en} · ${f.properties.name}`, { sticky: true, className: "prov-tip" });
+    layer.on("mouseover", () => { if (!isDimmed(adcode)) layer.setStyle({ fillOpacity: 0.55 }); });
+    layer.on("mouseout", () => applyStyles());
+    layer.on("click", () => { logEvent("province", meta.en); showProvince(adcode); });
+  }
+}).addTo(map);
+
+function isDimmed(adcode) {
+  return activeRegion && PROV[adcode] && PROV[adcode].region !== activeRegion;
+}
+function applyStyles() {
+  Object.entries(provLayers).forEach(([adcode, layer]) => {
+    const s = baseStyle(+adcode);
+    if (isDimmed(+adcode)) { s.fillOpacity = 0.06; s.weight = 0.5; }
+    else if (activeRegion) { s.fillOpacity = terrainOn ? 0.3 : 0.55; s.weight = 1.5; }
+    layer.setStyle(s);
+  });
+}
+
+// ---------- Cities ----------
+const cityMarkers = {};
+CITIES.forEach(c => {
+  const r = c.tier === 1 ? 6 : c.tier === 2 ? 4.5 : 3.5;
+  const m = L.circleMarker([c.lat, c.lng], {
+    radius: r, color: "#fff", weight: 1.5, fillColor: dark ? "#f0eee8" : "#2b2b28", fillOpacity: 0.95
+  }).addTo(map);
+  m.bindTooltip(`${c.name} ${c.zh}`, { className: "prov-tip", direction: "top", offset: [0, -4] });
+  m.on("click", e => { L.DomEvent.stopPropagation(e); logEvent("city", c.name); showCity(c.name, false); });
+  cityMarkers[c.name] = m;
+  if (c.tier === 1) {
+    L.marker([c.lat, c.lng], {
+      icon: L.divIcon({ className: "city-label", html: `<span>${c.name}</span>`, iconAnchor: [-7, 8] }),
+      interactive: false
+    }).addTo(map);
+  }
+});
+
+// ---------- Overlays: Hu Line + North-South line ----------
+const huLine = L.polyline([[50.25, 127.49], [25.03, 98.49]], { color: "#d0451b", weight: 2.5, dashArray: "8 6" });
+huLine.bindTooltip("Hu Line — 94% of Chinese live east of it", { permanent: true, direction: "right", className: "line-label", offset: [8, 0] });
+const nsLine = L.polyline(
+  [[34.2, 103.8], [33.6, 106.5], [33.9, 109.0], [33.2, 111.5], [32.6, 113.0], [32.9, 115.5], [33.3, 117.5], [33.7, 119.4], [34.0, 120.3]],
+  { color: "#2e6f9e", weight: 2.5, dashArray: "8 6" });
+nsLine.bindTooltip("Qinling–Huai line — the north/south divide", { permanent: true, direction: "bottom", className: "line-label" });
+
+// Migration flows: interior provinces → the three coastal magnets (+ NE snowbirds to Hainan)
+function flowBezier(a, b, curve, n = 28) {
+  const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+  const dx = b[0] - a[0], dy = b[1] - a[1];
+  const cx = mx - dy * curve, cy = my + dx * curve;
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, u = 1 - t;
+    pts.push([u * u * a[0] + 2 * u * t * cx + t * t * b[0], u * u * a[1] + 2 * u * t * cy + t * t * b[1]]);
+  }
+  return pts;
+}
+function flowArrowHead(pts, color) {
+  const p1 = pts[pts.length - 2], p2 = pts[pts.length - 1];
+  const lat = p2[0] * Math.PI / 180;
+  const ang = Math.atan2((p2[1] - p1[1]) * Math.cos(lat), p2[0] - p1[0]) * 180 / Math.PI;
+  return L.marker(p2, { interactive: false, icon: L.divIcon({ className: "", iconSize: [14, 14], iconAnchor: [7, 7],
+    html: `<svg width="14" height="14" viewBox="-7 -7 14 14" style="transform:rotate(${90 - ang}deg)"><polygon points="0,-7 5,7 -5,7" fill="${color}"/></svg>` }) });
+}
+const MIG_COLOR = "#6B4FBB";
+const MIG_HUBS = { prd: [22.8, 113.6], yrd: [31.1, 120.8], bj: [39.9, 116.4], sanya: [18.25, 109.5] };
+const MIG_FLOWS = [
+  { from: [30.6, 104.1], to: MIG_HUBS.prd, w: 3, label: "Sichuan → Pearl River Delta" },
+  { from: [30.6, 104.1], to: MIG_HUBS.yrd, w: 2, label: "Sichuan → Yangtze Delta" },
+  { from: [28.2, 112.9], to: MIG_HUBS.prd, w: 3, label: "Hunan → Pearl River Delta" },
+  { from: [23.9, 108.8], to: MIG_HUBS.prd, w: 3, label: "Guangxi → Pearl River Delta" },
+  { from: [28.7, 115.9], to: MIG_HUBS.prd, w: 2, label: "Jiangxi → Pearl River Delta" },
+  { from: [31.9, 117.3], to: MIG_HUBS.yrd, w: 3, label: "Anhui → Yangtze Delta (Shanghai)" },
+  { from: [34.75, 113.62], to: MIG_HUBS.bj, w: 2.5, label: "Henan → Beijing–Tianjin" },
+  { from: [34.75, 113.62], to: MIG_HUBS.yrd, w: 2, label: "Henan → Yangtze Delta" },
+  { from: [31.0, 112.3], to: MIG_HUBS.prd, w: 2, label: "Hubei → Pearl River Delta" },
+  { from: [44.0, 125.3], to: MIG_HUBS.bj, w: 2, label: "Northeast → Beijing" },
+  { from: [44.0, 125.3], to: MIG_HUBS.sanya, w: 1.5, label: "Northeast → Hainan (retiree snowbirds)" }
+];
+const migLayer = L.layerGroup(
+  MIG_FLOWS.flatMap(f => {
+    const pts = flowBezier(f.from, f.to, 0.18);
+    const line = L.polyline(pts, { color: MIG_COLOR, weight: 1 + f.w, opacity: 0.6 });
+    line.bindTooltip(f.label, { sticky: true, className: "prov-tip" });
+    return [line, flowArrowHead(pts, MIG_COLOR)];
+  }).concat(
+    [MIG_HUBS.prd, MIG_HUBS.yrd, MIG_HUBS.bj].map(p =>
+      L.circleMarker(p, { radius: 9, color: MIG_COLOR, weight: 2, fillColor: MIG_COLOR, fillOpacity: 0.25, interactive: false }))
+  )
+);
+
+// Geography layers: rivers, ranges, historical river courses
+function geoLabel(lat, lng, text, color) {
+  return L.marker([lat, lng], { interactive: false, icon: L.divIcon({ className: "city-label",
+    html: `<span style="font-size:13px;font-weight:700;color:${color}">${text}</span>`, iconSize: [230, 18], iconAnchor: [0, 9] }) });
+}
+function geoDot(lat, lng, tip) {
+  const m = L.circleMarker([lat, lng], { radius: 5, color: "#fff", weight: 1.5, fillColor: "#8a2e18", fillOpacity: 0.95 });
+  m.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return m;
+}
+function geoRiver(pts, tip, opts) {
+  const casing = L.polyline(pts, { color: "#ffffff", weight: (opts?.weight || 4) + 3, opacity: 0.9 });
+  const line = L.polyline(pts, { color: opts?.color || "#1d6fc0", weight: opts?.weight || 4, opacity: 0.95, dashArray: opts?.dashArray || null });
+  line.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return [casing, line];
+}
+
+const YELLOW_PTS = [[34.9,96.1],[35.5,99.5],[36.06,103.83],[37.5,105.2],[38.5,106.2],[40.3,107.0],[40.6,110.0],[40.2,111.2],[39.0,111.1],[36.5,110.4],[35.0,110.3],[34.7,111.2],[34.9,113.6],[35.0,114.5],[35.8,115.8],[36.7,117.0],[37.3,118.2],[37.8,119.0]];
+const WEI_PTS = [[34.6,104.2],[34.58,105.7],[34.36,107.2],[34.3,108.9],[34.5,110.0],[34.6,110.3]];
+const taihangBand = L.polygon(
+  [[35.3,112.5],[36.0,113.1],[37.0,113.5],[38.0,113.8],[39.0,113.9],[40.0,113.6],[40.0,114.3],[39.0,114.6],[38.0,114.5],[37.0,114.2],[36.0,113.8],[35.3,113.2]],
+  { color: "#6b4a2a", weight: 1.5, fillColor: "#6b4a2a", fillOpacity: 0.35 });
+taihangBand.bindTooltip("Taihang Mountains 太行山 — the 'Shan' in Shanxi/Shandong", { sticky: true, className: "prov-tip" });
+const yellowLayer = L.layerGroup([
+  ...geoRiver(YELLOW_PTS, "Yellow River 黄河 — current course (since 1855)"),
+  ...geoRiver(WEI_PTS, "Wei River 渭河 — the Yellow's great tributary; Xi'an sits on it", { weight: 2.5 }),
+  taihangBand,
+  geoLabel(41.1, 107.5, "Yellow River 黄河", "#1d6fc0"),
+  geoLabel(34.95, 105.1, "Wei River 渭河", "#1d6fc0"),
+  geoLabel(38.6, 114.9, "Taihang Mts 太行山", "#6b4a2a")
+]);
+
+const oldYellowLayer = L.layerGroup([
+  ...geoRiver([[34.9,113.6],[35.6,114.2],[36.6,114.9],[37.6,115.7],[38.5,116.5],[39.0,117.4],[39.1,117.9]],
+    "Ancient northern course (pre-602 BC, and much of Han–Song) — emptied near today's Tianjin", { color: "#0e8f7e", weight: 3, dashArray: "8 6" }),
+  ...geoRiver([[34.8,114.35],[34.4,115.6],[34.26,117.2],[34.0,118.3],[33.8,119.2],[34.0,120.3]],
+    "Southern course 1128–1855 AD — hijacked the Huai River, emptied south of Shandong", { color: "#c2452d", weight: 3, dashArray: "8 6" }),
+  geoDot(34.79, 114.35, "Kaifeng — the 'hanging river': the riverbed is ~10m ABOVE the city behind dikes"),
+  geoLabel(37.9, 117.0, "ancient course → Tianjin", "#0e8f7e"),
+  geoLabel(33.4, 117.4, "1128–1855 course → hijacked the Huai", "#c2452d")
+]);
+
+const qinlingBand = L.polygon(
+  [[34.3,104.5],[34.5,106.5],[34.3,108.5],[34.0,110.5],[33.7,112.0],[33.2,112.0],[33.5,110.3],[33.7,108.3],[33.8,106.3],[33.7,104.5]],
+  { color: "#6b4a2a", weight: 1.5, fillColor: "#6b4a2a", fillOpacity: 0.35 });
+qinlingBand.bindTooltip("Qinling Mountains 秦岭 — THE north/south divide and watershed", { sticky: true, className: "prov-tip" });
+const hanLayer = L.layerGroup([
+  qinlingBand,
+  ...geoRiver([[33.15,106.7],[33.07,107.03],[32.85,108.1],[32.7,109.0],[32.55,110.2],[32.5,111.5],[32.0,112.15],[31.5,112.6],[30.9,113.5],[30.58,114.27]],
+    "Han River 汉江 — namesake of the Han dynasty; joins the Yangtze at Wuhan", { weight: 3 }),
+  geoDot(33.07, 107.03, "Hanzhong 汉中 — basin between Qinling and Daba; named the Han dynasty and the Han people"),
+  geoLabel(34.55, 107.6, "Qinling Mts 秦岭", "#6b4a2a"),
+  geoLabel(31.9, 112.9, "Han River 汉江", "#1d6fc0"),
+  geoLabel(33.25, 105.9, "Hanzhong", "#8a2e18")
+]);
+
+// Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
+const terrainLayer = L.layerGroup([
+  L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
+    { attribution: "Terrain: Esri, USGS", maxZoom: 12, zIndex: 2 }),
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
+    { subdomains: "abcd", maxZoom: 12, zIndex: 3 })
+]);
+
+const overlays = {
+  huline: { layer: huLine, chip: "tg-hu" },
+  nsline: { layer: nsLine, chip: "tg-ns" },
+  migration: { layer: migLayer, chip: "tg-mig" },
+  terrain: { layer: terrainLayer, chip: "tg-terrain" },
+  yellow: { layer: yellowLayer, chip: "tg-yellow" },
+  oldyellow: { layer: oldYellowLayer, chip: "tg-oldyellow" },
+  han: { layer: hanLayer, chip: "tg-han" }
+};
+function setOverlay(id, on) {
+  const o = overlays[id];
+  if (!o) return;
+  if (on) { o.layer.addTo(map); document.getElementById(o.chip).classList.add("on"); }
+  else { map.removeLayer(o.layer); document.getElementById(o.chip).classList.remove("on"); }
+  if (id === "terrain") { terrainOn = on; applyStyles(); }
+}
+Object.entries(overlays).forEach(([id, o]) => {
+  document.getElementById(o.chip).onclick = () => {
+    const on = !map.hasLayer(o.layer);
+    logEvent("overlay", id + " " + (on ? "on" : "off"));
+    setOverlay(id, on);
+  };
+});
+document.getElementById("tg-reset").onclick = () => { logEvent("ui", "reset"); resetView(); };
+
+// ---------- Legend ----------
+const legendRows = document.getElementById("legend-rows");
+Object.entries(REGIONS).forEach(([id, r]) => {
+  const row = document.createElement("div");
+  row.className = "lg-row"; row.id = "lg-" + id;
+  row.innerHTML = `<span class="lg-dot" style="background:${r.color}"></span><span>${r.name}</span>`;
+  row.onclick = () => { logEvent("region", r.name); focusRegion(id); };
+  legendRows.appendChild(row);
+});
+function markLegend(id) {
+  document.querySelectorAll(".lg-row").forEach(el => el.classList.remove("active"));
+  if (id) document.getElementById("lg-" + id)?.classList.add("active");
+}
+
+// ---------- Panel ----------
+const panel = document.getElementById("panel");
+const panelBody = document.getElementById("panel-body");
+function openPanel(html) { panelBody.innerHTML = html; panel.classList.add("visible"); }
+function closePanel() { panel.classList.remove("visible"); }
+
+function regionPanelHTML(id) {
+  const r = REGIONS[id];
+  const cities = CITIES.filter(c => c.region === id)
+    .map(c => `<span class="citychip" onclick="logEvent('city','${c.name}');showCity('${c.name.replace(/'/g, "\\'")}',true)">${c.name}</span>`).join("");
+  return `
+    <div class="kicker" style="color:${r.color}">Region</div>
+    <h2>${r.name}</h2>
+    <div class="zh">${r.zh}</div>
+    <p class="tagline">${r.tagline}</p>
+    <ul>${r.bullets.map(b => `<li>${b}</li>`).join("")}</ul>
+    <div class="think"><strong>How to think about it:</strong> ${r.think}</div>
+    <div class="sect">Cities</div>${cities}`;
+}
+
+function focusRegion(id) {
+  const r = REGIONS[id];
+  if (!r) return;
+  activeRegion = id;
+  applyStyles(); markLegend(id);
+  const group = L.featureGroup(r.provinces.map(a => provLayers[a]).filter(Boolean));
+  map.flyToBounds(group.getBounds().pad(0.12), { duration: 1.1 });
+  openPanel(regionPanelHTML(id));
+}
+
+function showProvince(adcode) {
+  const meta = PROV[adcode];
+  if (!meta) return;
+  const r = REGIONS[meta.region];
+  activeRegion = null; applyStyles(); markLegend(null);
+  provLayers[adcode].setStyle({ fillOpacity: 0.62, weight: 2.5, color: "#fff" });
+  const zh = (CHINA_GEOJSON.features.find(f => f.properties.adcode === adcode) || {}).properties?.name || "";
+  openPanel(`
+    <div class="kicker" style="color:${r.color}">Province · ${r.name}</div>
+    <h2>${meta.en}</h2>
+    <div class="zh">${zh}</div>
+    <p style="font-size:13px;line-height:1.5">${meta.blurb}</p>
+    <span class="backlink" onclick="focusRegion('${meta.region}')">← See the whole ${r.name} region</span>`);
+}
+
+function showCity(name, fly) {
+  const c = CITIES.find(x => x.name === name);
+  if (!c) return;
+  const r = REGIONS[c.region];
+  if (fly) map.flyTo([c.lat, c.lng], Math.max(map.getZoom(), 6.5), { duration: 1.1 });
+  pulse(c.lat, c.lng, c.name);
+  openPanel(`
+    <div class="kicker" style="color:${r.color}">City · ${r.name}</div>
+    <h2>${c.name}</h2>
+    <div class="zh">${c.zh}</div>
+    <p style="font-size:13px;line-height:1.5">${c.blurb}</p>
+    <span class="backlink" onclick="focusRegion('${c.region}')">← See the whole ${r.name} region</span>`);
+}
+
+function resetView() {
+  activeRegion = null; applyStyles(); markLegend(null); closePanel(); clearPulse(); clearCaption();
+  map.flyTo([36.5, 104.5], 4.25, { duration: 1.0 });
+}
+map.on("click", () => {}); // keep map clicks from doing anything destructive
+
+// ---------- Claude gesture layer ----------
+let pulseMarker = null;
+function pulse(lat, lng, label) {
+  clearPulse();
+  pulseMarker = L.marker([lat, lng], {
+    icon: L.divIcon({ className: "pulse-marker",
+      html: `<div class="pulse-ring"></div><div class="pulse-core"></div>${label ? `<div class="pulse-tag">${label}</div>` : ""}` }),
+    interactive: false, zIndexOffset: 2000
+  }).addTo(map);
+}
+function clearPulse() { if (pulseMarker) { map.removeLayer(pulseMarker); pulseMarker = null; } }
+
+const captionEl = document.getElementById("caption");
+function caption(text) { document.getElementById("caption-text").innerHTML = text; captionEl.classList.add("visible"); }
+function clearCaption() { captionEl.classList.remove("visible"); }
+
+window.claudeAPI = {
+  flyTo: (lat, lng, zoom) => map.flyTo([lat, lng], zoom || 6, { duration: 1.3 }),
+  focusRegion,
+  focusProvince: q => {
+    const entry = Object.entries(PROV).find(([a, m]) => m.en.toLowerCase() === String(q).toLowerCase() || String(a) === String(q));
+    if (entry) { showProvince(+entry[0]); map.flyToBounds(provLayers[+entry[0]].getBounds().pad(0.3), { duration: 1.2 }); }
+  },
+  focusCity: name => showCity(name, true),
+  pulse, clearPulse, caption, clearCaption,
+  overlay: setOverlay,
+  reset: resetView,
+  getEvents: () => window.__events.slice()
+};
+</script>
+</body>
+</html>
