@@ -49,7 +49,25 @@ Mandarin difficulty key: 🟢 clear/standard-ish · 🟡 accented but followable
 
 ## North China — (to fill as we tour)
 ## Yangtze Delta — (to fill)
-## South Coast — (to fill)
+
+## South Coast
+
+### Watch
+- 🟢 **《狂飙》 The Knockout** (2023 series) — fishmonger-to-crime-boss saga in a fictional Guangdong city; the biggest Chinese TV hit of 2023 and in Mandarin — the best language-practice pick for this region.
+- 🔴 **Infernal Affairs 无间道** (2002) — the HK cop-triad classic that Scorsese remade as The Departed. Cantonese.
+- 🔴 **In the Mood for Love 花样年华** (Wong Kar-wai, 2000) — 1960s HK, the refugee-Shanghai diaspora atmosphere. Cantonese + Shanghainese.
+- 🔴 **Ip Man 叶问** (2008) — Foshan kung fu mythology; Bruce Lee's teacher vs. the Japanese occupation. Cantonese.
+
+### Read
+- **_Factory Girls_** — Leslie T. Chang. Two years embedded with migrant women in Dongguan's factories; the single best book on the world the migration arrows point to.
+
+### Listen
+- **Beyond — 海阔天空** (1993) — the Cantopop anthem; every Chinese person of a certain age can sing it.
+
+### Context / touchstones
+- **Stephen Chow 周星驰 / mo lei tau 无厘头** — HK's absurdist comedy tradition; Shaolin Soccer and Kung Fu Hustle travel well.
+- **Shein & Temu** — both run on Guangzhou/PRD supply chains: the Canton system's modern echo, exporting small parcels instead of tea.
+- **Gongfu tea 工夫茶** — the Chaoshan (Teochew) tea ritual that became "Chinese tea ceremony" worldwide.
 ## Central — (to fill)
 ## Southwest — (to fill)
 ## Northwest — (to fill)
