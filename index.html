@@ -125,6 +125,8 @@
   <span class="chip" id="tg-oldyellow">Old Yellow courses</span>
   <span class="chip" id="tg-han">Han River &amp; Qinling</span>
   <span class="chip" id="tg-story">Story pins</span>
+  <span class="chip" id="tg-yangtze">Yangtze &amp; Canal</span>
+  <span class="chip" id="tg-treaty">Treaty century</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
 
@@ -495,6 +497,10 @@ const hanLayer = L.layerGroup([
 ]);
 
 // Story pins: places emphasized during the tour — industry (purple), history/geopolitics (rust), culture/econ models (teal)
+const nanlingBand = L.polygon(
+  [[25.6,110.2],[25.9,111.5],[25.5,113.0],[25.3,114.5],[25.0,116.0],[24.4,116.2],[24.7,114.5],[24.8,113.0],[25.2,111.5],[25.0,110.2]],
+  { color: "#6b4a2a", weight: 1.5, fillColor: "#6b4a2a", fillOpacity: 0.35 });
+nanlingBand.bindTooltip("Nanling 南岭 — 'the Southern Ranges': the wall that made Lingnan a world apart", { sticky: true, className: "prov-tip" });
 const storyLayer = L.layerGroup([
   geoDot(46.59, 125.00, "Daqing 大庆 — the oilfield that funded Mao-era China; the profitable SOE exception", "#4E2A84"),
   geoLabel(46.75, 125.4, "Daqing (oil)", "#4E2A84"),
@@ -523,7 +529,86 @@ const storyLayer = L.layerGroup([
   geoDot(30.63, 122.06, "Yangshan Deep-Water Port — the automated flagship terminal of the world's busiest container port", "#4E2A84"),
   geoLabel(30.3, 121.75, "Yangshan Port", "#4E2A84"),
   ...geoRiver([[30.89,121.93],[30.75,121.99],[30.63,122.06]],
-    "Donghai Bridge 东海大桥 — 32.5 km across open sea to Yangshan; drivable", { color: "#8a2e18", weight: 2.5 })
+    "Donghai Bridge 东海大桥 — 32.5 km across open sea to Yangshan; drivable", { color: "#8a2e18", weight: 2.5 }),
+  nanlingBand,
+  geoLabel(26.1, 111.8, "Nanling 南岭", "#6b4a2a"),
+  geoDot(24.87, 118.68, "Quanzhou 泉州 — medieval world's greatest port (Marco Polo's 'Zayton'); heart of Hokkien maritime culture", "#4E2A84"),
+  geoLabel(24.55, 118.9, "Quanzhou", "#4E2A84"),
+  geoDot(23.02, 113.12, "Foshan 佛山 — factory belt + kung fu: Wong Fei-hung, Ip Man, Bruce Lee's roots", "#4E2A84"),
+  geoDot(23.04, 113.75, "Dongguan 东莞 — the archetypal factory city between Guangzhou and Shenzhen", "#4E2A84"),
+  geoDot(23.36, 116.68, "Chaozhou/Shantou 潮汕 — Teochew homeland: tea culture, merchant dynasties of Bangkok and HK", "#0e8f7e"),
+  geoDot(19.61, 110.95, "Wenchang 文昌 — Hainan's spaceport: low latitude, sea-delivered rockets, publicly viewable launches", "#8a2e18"),
+  geoLabel(19.25, 111.2, "Wenchang spaceport", "#8a2e18")
+]);
+
+// Yangtze & Grand Canal: the commercial spine and the imperial grain pipe
+const yangtzeLayer = L.layerGroup([
+  ...geoRiver([[28.77,104.6],[29.56,106.55],[30.0,108.4],[30.7,111.28],[30.35,112.9],[30.58,114.27],[29.85,115.2],[29.7,116.0],[30.5,117.05],[31.0,118.3],[32.06,118.8],[32.2,119.45],[31.9,120.5],[31.4,121.8]],
+    "Yangtze River 长江 — the commercial spine: navigable by ocean ships to Nanjing, by barges to Chongqing"),
+  ...geoRiver([[39.9,116.4],[39.1,117.2],[38.3,116.85],[36.45,115.98],[35.4,116.6],[34.26,117.2],[33.5,119.15],[32.4,119.4],[32.2,119.45],[31.3,120.6],[30.27,120.15]],
+    "Grand Canal 大运河 — 1,800 km, dug by the 600s AD: the pipe that pumped southern rice to northern capitals", { color: "#0e8f7e", weight: 3, dashArray: "2 6" }),
+  geoLabel(30.1, 109.3, "Yangtze 长江", "#1d6fc0"),
+  geoLabel(36.1, 114.6, "Grand Canal 大运河", "#0e8f7e")
+]);
+
+// Treaty century (1839–1911): opium route, treaty ports & concessions, foreign military penetration
+function arrowPath(pts, color, tip, dash) {
+  const line = L.polyline(pts, { color, weight: 3, opacity: 0.85, dashArray: dash || null });
+  line.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return [line, flowArrowHead(pts, color)];
+}
+function tipLine(pts, opts, tip) {
+  const l = L.polyline(pts, opts);
+  l.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return l;
+}
+const treatyLayer = L.layerGroup([
+  tipLine([[16.5,90.0],[12.0,93.5],[8.0,96.5],[5.5,98.5],[3.2,100.6],[1.8,102.9],[1.4,104.3],[3.0,106.5],[7.0,108.8],[11.5,110.5],[16.0,111.8],[19.5,112.8],[21.8,113.7]],
+    { color: "#3a3a3a", weight: 2.5, dashArray: "8 6", opacity: 0.8 },
+    "The opium route: grown in British Bengal, shipped through the Strait of Malacca to the Canton estuary. Tea and silver flowed back."),
+  geoLabel(9.5, 95.5, "opium from British India", "#3a3a3a"),
+  ...arrowPath([[21.9,113.9],[21.9,115.0],[22.5,116.5],[23.2,117.6],[23.9,118.3],[24.42,118.25],[25.2,119.6],[26.2,120.6],[27.5,121.5],[28.7,122.3],[29.7,122.65],[30.6,122.8],[31.1,122.5],[31.55,121.9],[31.77,121.15],[32.02,120.75],[31.95,120.25],[32.02,119.85],[32.21,119.47],[32.15,119.1],[32.09,118.86]], "#c2452d",
+    "1st Opium War, 1840–42: Royal Navy up the coast, into the Yangtze — Wusong and Shanghai taken June 1842, the Grand Canal cut at Zhenjiang, guns anchored off Nanjing → Treaty of Nanjing"),
+  ...arrowPath([[22.3,115.2],[23.3,117.9],[24.8,119.9],[26.5,121.3],[28.5,122.7],[30.5,123.4],[32.5,123.4],[34.5,122.6],[36.2,122.9],[37.2,123.2],[37.9,122.6],[38.2,121.6],[38.35,120.4],[38.6,119.2],[38.85,118.3],[38.96,117.78]], "#2e6f9e",
+    "2nd Opium War, 1858 & 1860: Anglo-French fleet north along the coast, around Shandong, through the Bohai Strait — storming the Dagu Forts"),
+  ...arrowPath([[38.97,117.74],[39.08,117.45],[39.13,117.20],[39.25,117.05],[39.45,116.95],[39.65,116.85],[39.82,116.70],[39.90,116.55],[39.96,116.36]], "#2e6f9e",
+    "1860: up the Hai River to Tianjin, then 120km to Beijing — the emperor flees to Chengde, the Summer Palace burns"),
+  ...arrowPath([[31.5,121.95],[31.77,121.15],[32.0,120.7],[32.2,119.47],[32.09,118.8],[31.55,118.5],[31.0,118.35],[30.65,117.85],[30.5,117.05],[29.95,116.45],[29.72,116.0],[29.75,115.5],[30.0,115.0],[30.35,114.7],[30.6,114.32]], "#0e8f7e",
+    "From 1858: foreign gunboats granted the run of the Yangtze — treaty ports 1,000km inland. Warships patrolled China's main river until 1949"),
+  ...arrowPath([[38.90,117.85],[39.02,117.35],[39.10,117.12],[39.30,116.98],[39.55,116.90],[39.75,116.72],[39.86,116.50]], "#3a3a3a",
+    "1900, Boxer War: Eight-Nation Alliance repeats the Dagu→Tianjin→Beijing route; occupies and loots the capital for a year", "6 5"),
+  ...arrowPath([[53.9,121.0],[53.3,124.0],[52.2,127.0],[50.4,129.3],[49.3,131.5],[48.7,134.2]], "#4E2A84",
+    "Russia, 1858–60: annexed everything north of the Amur and east to the Pacific by treaty, without a shot"),
+  ...arrowPath([[45.3,133.8],[44.5,133.2],[43.7,132.6],[43.14,131.92]], "#4E2A84", "Russia 1860: ...including the coast down to new Vladivostok"),
+  ...arrowPath([[37.6,126.85],[38.5,125.9],[39.05,125.72],[39.65,125.0],[40.05,124.5],[40.0,123.7],[39.6,122.9],[39.2,122.3],[38.95,121.8],[38.83,121.3]], "#b8860b",
+    "Japan, 1894–95: through Korea, across the Yalu, down Liaodong to Port Arthur → Treaty of Shimonoseki: Taiwan ceded, Korea out of China's orbit"),
+  geoDot(22.82, 113.65, "Humen 虎门 (the Bogue), June 1839 — Lin Zexu destroys 1,000+ tons of British opium: the war's trigger", "#000000"),
+  geoLabel(22.6, 112.0, "Humen 1839", "#000000"),
+  geoDot(23.13, 113.26, "Guangzhou — the Canton system's single legal port (1757–1842); Thirteen Factories; treaty port 1842", "#c2452d"),
+  geoDot(24.48, 118.09, "Xiamen (Amoy) — treaty port 1842", "#c2452d"),
+  geoDot(26.07, 119.30, "Fuzhou — treaty port 1842", "#c2452d"),
+  geoDot(29.87, 121.54, "Ningbo — treaty port 1842", "#c2452d"),
+  geoDot(31.23, 121.47, "Shanghai — treaty port 1842; International Settlement + French Concession grew into Asia's greatest port city", "#555555"),
+  geoLabel(31.5, 122.2, "Shanghai concessions", "#555555"),
+  geoDot(22.28, 114.16, "Hong Kong — island ceded 1842, Kowloon 1860, New Territories leased 99 years in 1898 (hence 1997)", "#c2452d"),
+  geoLabel(21.65, 114.4, "Hong Kong (UK 1842)", "#c2452d"),
+  geoDot(22.20, 113.55, "Macau — Portuguese since 1557, formalized 1887; returned 1999", "#0e8f7e"),
+  geoDot(39.13, 117.20, "Tianjin — second-war treaty port; up to NINE national concessions at once", "#555555"),
+  geoLabel(39.35, 118.1, "Tianjin (9 concessions)", "#555555"),
+  geoDot(30.58, 114.28, "Hankou (Wuhan) — Yangtze treaty port, five foreign concessions 600km inland", "#555555"),
+  geoDot(36.07, 120.38, "Qingdao — German leased territory 1898: the brewery is the surviving artifact", "#6b4a2a"),
+  geoLabel(35.65, 121.0, "Qingdao (Germany)", "#6b4a2a"),
+  geoDot(37.51, 122.12, "Weihaiwei — British lease 1898, to watch the Russians across the gulf", "#c2452d"),
+  geoDot(38.80, 121.26, "Lüshun/Dalian (Port Arthur) — Russian lease 1898; seized by Japan 1905", "#4E2A84"),
+  geoLabel(39.05, 122.1, "Port Arthur (Russia→Japan)", "#4E2A84"),
+  geoDot(21.27, 110.36, "Guangzhouwan (Zhanjiang) — French leased territory 1899", "#2e6f9e"),
+  geoDot(38.97, 117.72, "Dagu (Taku) Forts 大沽炮台 — the gate to Beijing, stormed 1858, 1860, 1900; the 1901 settlement banned China from re-fortifying it", "#000000"),
+  geoLabel(38.5, 118.3, "Dagu Forts", "#000000"),
+  geoDot(39.99, 116.30, "Yuanmingyuan 圆明园 (Old Summer Palace) — burned by British and French troops, Oct 1860; preserved as ruins, a national memory site", "#2e6f9e"),
+  geoLabel(40.3, 116.6, "Summer Palace burned 1860", "#2e6f9e"),
+  geoDot(32.21, 119.47, "Zhenjiang 镇江 — where the Yangtze crosses the Grand Canal: the 1842 chokehold", "#c2452d"),
+  geoDot(31.39, 121.5, "Wusong 吴淞 — the forts guarding the Huangpu/Yangtze junction, taken June 1842; Shanghai fell days later", "#c2452d"),
+  geoDot(40.97, 117.93, "Chengde 承德 — the Xianfeng Emperor fled here in 1860 and died without returning", "#555555")
 ]);
 
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
@@ -542,7 +627,9 @@ const overlays = {
   yellow: { layer: yellowLayer, chip: "tg-yellow" },
   oldyellow: { layer: oldYellowLayer, chip: "tg-oldyellow" },
   han: { layer: hanLayer, chip: "tg-han" },
-  story: { layer: storyLayer, chip: "tg-story" }
+  story: { layer: storyLayer, chip: "tg-story" },
+  yangtze: { layer: yangtzeLayer, chip: "tg-yangtze" },
+  treaty: { layer: treatyLayer, chip: "tg-treaty" }
 };
 function setOverlay(id, on) {
   const o = overlays[id];
