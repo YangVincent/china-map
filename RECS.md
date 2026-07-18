@@ -53,4 +53,3 @@ Mandarin difficulty key: 🟢 clear/standard-ish · 🟡 accented but followable
 ## Southwest — (to fill)
 ## Northwest — (to fill)
 ## Tibet — (to fill)
-## Taiwan — (to fill)
