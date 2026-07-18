@@ -13,6 +13,8 @@ Mandarin difficulty key: 🟢 clear/standard-ish · 🟡 accented but followable
 - **Wenchang spaceport launch 文昌 (Hainan)** — China's only publicly viewable launch site: beach crowds watch Long March 5 heavy-lift launches (space station modules, lunar/Mars missions). Time a Hainan trip to a launch window; pairs with Sanya beaches and the duty-free zone.
 - **Fujian tulou 土楼** (Yongding/Nanjing counties, inland from Xiamen) — the Hakka clan ring-fortresses, UNESCO-listed, many still inhabited; stay overnight in one rather than day-tripping. Target **Chengqilou 承启楼** (Gaobei village, Yongding) — "the king of tulou": four concentric rings, ~600–800 residents at peak. Pair with **Kaiping diaolou 碉楼** near Guangzhou — the Cantonese counterpart: fortified watchtowers built with overseas-Chinese remittances in hybrid Western styles.
 - **Chaoshan food crawl (Chaozhou + Shantou)** — beef hotpot, marinated goose, midnight congee stalls, and gongfu tea in its birthplace; China's most obsessed-over regional food scene relative to its fame.
+- **Changsha night crawl** — black stinky tofu, kouwei xia (spicy crayfish), a Chayan Yuese 茶颜悦色 milk tea, and the Wenheyou 文和友 retro mega-plaza; the nightlife capital of inland China.
+- **Qiandongnan loop (Guizhou)** — Kaili sour-soup fish at the source, then Miao villages (Xijiang Qianhu) and Dong villages (Zhaoxing) for the silver headdresses and UNESCO grand songs. Pair with the **FAST telescope** visitor area and **Huangguoshu falls**.
 
 ## Foundations / all-China
 
