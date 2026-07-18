@@ -121,6 +121,7 @@
   <span class="chip" id="tg-ns">North–South line</span>
   <span class="chip" id="tg-mig">Migration flows</span>
   <span class="chip" id="tg-terrain">Terrain</span>
+  <span class="chip" id="tg-sat">Satellite</span>
   <span class="chip" id="tg-yellow">Yellow River</span>
   <span class="chip" id="tg-oldyellow">Old Yellow courses</span>
   <span class="chip" id="tg-han">Han River &amp; Qinling</span>
@@ -336,11 +337,12 @@ function logEvent(kind, name) {
 const provLayers = {};   // adcode -> leaflet layer
 let activeRegion = null;
 let terrainOn = false;
+let satOn = false;
 
 function baseStyle(adcode) {
   const meta = PROV[adcode];
   const color = meta ? REGIONS[meta.region].color : "#999";
-  return { color: "#ffffff", weight: 1, fillColor: color, fillOpacity: terrainOn ? 0.16 : 0.38 };
+  return { color: "#ffffff", weight: 1, fillColor: color, fillOpacity: satOn ? 0.05 : (terrainOn ? 0.16 : 0.38) };
 }
 
 const geoLayer = L.geoJSON(CHINA_GEOJSON, {
@@ -365,7 +367,7 @@ function applyStyles() {
   Object.entries(provLayers).forEach(([adcode, layer]) => {
     const s = baseStyle(+adcode);
     if (isDimmed(+adcode)) { s.fillOpacity = 0.06; s.weight = 0.5; }
-    else if (activeRegion) { s.fillOpacity = terrainOn ? 0.3 : 0.55; s.weight = 1.5; }
+    else if (activeRegion) { s.fillOpacity = satOn ? 0.15 : (terrainOn ? 0.3 : 0.55); s.weight = 1.5; }
     layer.setStyle(s);
   });
 }
@@ -548,7 +550,17 @@ const storyLayer = L.layerGroup([
   geoDot(25.65, 106.86, "FAST 天眼 — the 500m 'Sky Eye', world's largest radio telescope, cradled in a natural karst sinkhole", "#4E2A84"),
   geoLabel(25.3, 107.1, "FAST telescope", "#4E2A84"),
   geoDot(27.86, 106.42, "Maotai town 茅台镇 (Renhuai) — home of Kweichow Moutai, the world's most valuable liquor company", "#4E2A84"),
-  geoLabel(28.1, 106.6, "Maotai", "#4E2A84")
+  geoLabel(28.1, 106.6, "Maotai", "#4E2A84"),
+  geoDot(26.42, 106.31, "Gui'an New Area 贵安新区 — the data-center cluster: Tencent's cave-built Qixing center, Huawei campus, Apple's China iCloud. Cool karst + cheap hydropower.", "#4E2A84"),
+  geoLabel(26.1, 106.5, "Gui'an data centers", "#4E2A84"),
+  geoDot(29.27, 117.18, "Jingdezhen 景德镇 — 1,000 years as the world's porcelain capital; imperial kilns; 'kaolin' is named for its Gaoling village", "#4E2A84"),
+  geoLabel(29.5, 117.4, "Jingdezhen", "#4E2A84"),
+  geoDot(30.82, 111.00, "Three Gorges Dam 三峡大坝 — the world's largest power station, plugging the Yangtze at Yichang", "#4E2A84"),
+  geoLabel(31.05, 111.2, "Three Gorges Dam", "#4E2A84"),
+  geoDot(32.40, 111.00, "Wudang Mountains 武当山 — Taoist monastic complex; the mythic home of tai chi and 'internal' martial arts", "#0e8f7e"),
+  geoLabel(32.65, 111.2, "Wudang", "#0e8f7e"),
+  geoDot(26.57, 114.17, "Jinggangshan 井冈山 — Mao's first rural base (1927): where 'surround the cities from the countryside' began", "#8a2e18"),
+  geoLabel(26.25, 114.35, "Jinggangshan", "#8a2e18")
 ]);
 
 // Yangtze & Grand Canal: the commercial spine and the imperial grain pipe
@@ -671,11 +683,20 @@ const terrainLayer = L.layerGroup([
     { subdomains: "abcd", maxZoom: 12, zIndex: 3 })
 ]);
 
+// Satellite: Esri World Imagery + halo place labels; region fills go near-transparent
+const satelliteLayer = L.layerGroup([
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    { attribution: "Imagery: Esri, Maxar", maxZoom: 18, zIndex: 2 }),
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    { maxZoom: 18, zIndex: 3 })
+]);
+
 const overlays = {
   huline: { layer: huLine, chip: "tg-hu" },
   nsline: { layer: nsLine, chip: "tg-ns" },
   migration: { layer: migLayer, chip: "tg-mig" },
   terrain: { layer: terrainLayer, chip: "tg-terrain" },
+  satellite: { layer: satelliteLayer, chip: "tg-sat" },
   yellow: { layer: yellowLayer, chip: "tg-yellow" },
   oldyellow: { layer: oldYellowLayer, chip: "tg-oldyellow" },
   han: { layer: hanLayer, chip: "tg-han" },
@@ -691,6 +712,7 @@ function setOverlay(id, on) {
   if (on) { o.layer.addTo(map); document.getElementById(o.chip).classList.add("on"); }
   else { map.removeLayer(o.layer); document.getElementById(o.chip).classList.remove("on"); }
   if (id === "terrain") { terrainOn = on; applyStyles(); }
+  if (id === "satellite") { satOn = on; applyStyles(); }
 }
 Object.entries(overlays).forEach(([id, o]) => {
   document.getElementById(o.chip).onclick = () => {
