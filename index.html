@@ -127,6 +127,7 @@
   <span class="chip" id="tg-story">Story pins</span>
   <span class="chip" id="tg-yangtze">Yangtze &amp; Canal</span>
   <span class="chip" id="tg-treaty">Treaty century</span>
+  <span class="chip" id="tg-food">Cuisines</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
 
@@ -611,6 +612,30 @@ const treatyLayer = L.layerGroup([
   geoDot(40.97, 117.93, "Chengde 承德 — the Xianfeng Emperor fled here in 1860 and died without returning", "#555555")
 ]);
 
+// Cuisines: rough flavor clusters — dot color = dominant profile
+// red = spicy, teal = fresh/light, amber = wheat/salty north, pink = sweet Jiangnan, green = herbal, brown = lamb & cumin
+const CUISINES = [
+  [36.5, 118.5, "amber", "Lu 鲁 (Shandong)", "Lu cuisine — the northern mother cuisine: braises, alliums, clear soups; imperial banquets and Peking duck descend from it"],
+  [37.8, 112.4, "amber", "Shanxi noodles", "Shanxi — noodle acrobatics (knife-cut, pulled, one-string) and black vinegar on everything"],
+  [44.5, 126.5, "amber", "Dongbei hearty", "Northeast — guobaorou, suancai-and-pork stews, dumplings by the hundred, BBQ skewers; portions built for -25°C"],
+  [41.5, 86.0, "brown", "Xinjiang lamb & cumin", "Xinjiang — cumin lamb skewers, dapanji (big-plate chicken), naan, hand-pulled laghman noodles"],
+  [36.05, 103.9, "brown", "Lanzhou beef noodle", "Lanzhou 牛肉面 — the hand-pulled beef noodle bowl that colonized every Chinese street corner"],
+  [32.8, 119.8, "pink", "Jiangnan sweet & refined", "Huaiyang/Su/Zhe/Hui — knife-work, gentle sweetness, red-braising, hairy crab, xiaolongbao; the scholar-merchant table"],
+  [30.3, 103.5, "red", "Sichuan mala", "Sichuan 川 — mala (numbing + hot) is only 1 of 23 codified flavor profiles; hotpot, mapo tofu, twice-cooked pork"],
+  [27.8, 111.8, "red", "Hunan dry-hot", "Hunan 湘 — dry heat and smoke: chopped-chili fish head, cured pork; spicier than Sichuan, no numbing"],
+  [26.8, 106.2, "red", "Guizhou sour-hot", "Guizhou — sour-hot: fermented rice-chili paste, suantang (sour soup) fish; 'three days without sour and the legs wobble'"],
+  [24.8, 101.8, "green", "Yunnan herbal", "Yunnan — wild mushrooms, flowers, herbs, crossing-the-bridge noodles, and (uniquely in China) cheese: rubing and rushan"],
+  [22.9, 112.8, "teal", "Cantonese fresh", "Yue 粤 — the freshness doctrine: steaming, roast meats, yum cha; Shunde is the chef-factory; 'the ingredient is the point'"],
+  [23.4, 116.4, "teal", "Chaoshan", "Chaoshan — beef hotpot with knife-cut cuts, marinated goose, midnight congee; gongfu tea between every course"],
+  [25.8, 118.2, "teal", "Fujian Min", "Min 闽 — soups and broths above all (Buddha Jumps Over the Wall), red-yeast cooking, seafood umami"],
+  [19.7, 110.4, "teal", "Wenchang chicken", "Hainan — Wenchang chicken: the poached-chicken-and-rice that the diaspora carried off as 'Hainanese chicken rice'"]
+];
+const CUISINE_COLORS = { red: "#c2452d", teal: "#0e8f7e", amber: "#b8860b", pink: "#d4537e", green: "#639922", brown: "#6b4a2a" };
+const cuisinesLayer = L.layerGroup(CUISINES.flatMap(c => [
+  geoDot(c[0], c[1], c[4], CUISINE_COLORS[c[2]]),
+  geoLabel(c[0] - 0.55, c[1] + 0.25, c[3], CUISINE_COLORS[c[2]])
+]));
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -629,7 +654,8 @@ const overlays = {
   han: { layer: hanLayer, chip: "tg-han" },
   story: { layer: storyLayer, chip: "tg-story" },
   yangtze: { layer: yangtzeLayer, chip: "tg-yangtze" },
-  treaty: { layer: treatyLayer, chip: "tg-treaty" }
+  treaty: { layer: treatyLayer, chip: "tg-treaty" },
+  food: { layer: cuisinesLayer, chip: "tg-food" }
 };
 function setOverlay(id, on) {
   const o = overlays[id];
