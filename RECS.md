@@ -25,6 +25,12 @@ Mandarin difficulty key: 🟢 clear/standard-ish · 🟡 accented but followable
 ### Cultural touchstones
 - **Guochao 国潮 ("national wave")** — the defining consumer-culture shift of recent years: Chinese Gen-Z deciding that Chinese aesthetics and brands are the cool ones. Usual origin marker: Li-Ning's 2018 "China Li-Ning" streetwear show at Paris Fashion Week. Now spans hanfu revival, Forbidden City merchandise, domestic cosmetics beating French houses, Black Myth: Wukong, the tea-culture renaissance — and the business model of Jingdezhen's young ceramicists.
 
+### Snow China (snowboarding notes, 2026)
+- **The manufacturing reality**: most of the world's snowboards are already built in China — Burton produces mostly in China/Austria, Salomon builds in China; the industry runs through big OEMs (GP87 in China — with lineage to Flow's founders — and SWS in Dubai), clustered in the Dongguan/Ningbo/Shenzhen composites hubs.
+- **The domestic-brand wave**: catalyzed by Beijing 2022 + the "300M people into winter sports" campaign; snowboard e-commerce sales +48% in 2023. Flagship brand **Nobaday** (founder Liu Fengxi "Ricky"; sponsored national-team gear at the Olympics; Chongli lifestyle stores) cracked the mass market with the ¥999 "Little Blackboard" vs ¥3–4k foreign boards. Star: **Su Yiming**, Big Air gold at 17, made the sport cool for Gen-Z.
+- **Where**: Chongli 崇礼 (Olympic cluster, ~1h HSR from Beijing) for the scene; Jilin/Heilongjiang (Beidahu, Songhua Lake, Yabuli, Changbaishan) for cold northeast snow; **Altay, Xinjiang** for powder and the 10,000-year-old skiing claim (cave paintings; Tuvan/Kazakh villagers still make fur-skinned skis); Shanghai's Lingang mega-dome for the world's-largest-indoor absurdity.
+- Map: see the **Snow** toggle.
+
 ### Read
 - **_Against the Law: Labor Protests in China's Rustbelt and Sunbelt_** — Ching Kwan Lee. The definitive scholarly book comparing Northeast (rustbelt) and Guangdong (sunbelt) labor politics; covers Liaoyang 2002 in depth.
 - **_Paying the Price: Worker Unrest in Northeast China_** — Human Rights Watch report (2002), free online. The primary documentation of the Liaoyang and Daqing protests.

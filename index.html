@@ -139,6 +139,7 @@
   <span class="chip" id="tg-profile">3 Gorges levels</span>
   <span class="chip" id="tg-rail">Rail trunks</span>
   <span class="chip" id="tg-porc">Porcelain routes</span>
+  <span class="chip" id="tg-snow">Snow</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -870,6 +871,21 @@ const porcelainLayer = L.layerGroup([
   geoLabel(21.3, 115.2, "export → the world", "#b8860b")
 ]);
 
+// Snow: China's snowboarding geography — Olympic cluster, northeast cold-snow belt, Xinjiang powder, indoor absurdity
+const snowLayer = L.layerGroup([
+  geoDot(40.97, 115.28, "Chongli 崇礼 — the 2022 Olympic snow cluster (Thaiwoo, Genting, Fulong); ~1h HSR from Beijing; guochao snow culture and Nobaday flagship stores", "#2e6f9e"),
+  geoLabel(41.2, 115.5, "Chongli (Olympic cluster)", "#2e6f9e"),
+  geoDot(44.82, 128.45, "Yabuli 亚布力 — China's oldest major resort, in Heilongjiang's cold-snow belt", "#2e6f9e"),
+  geoLabel(45.05, 128.65, "Yabuli", "#2e6f9e"),
+  geoDot(43.29, 126.68, "Beidahu 北大湖 + Songhua Lake — Jilin's powder belt: the Northeast's best terrain and driest snow", "#2e6f9e"),
+  geoLabel(43.0, 126.9, "Beidahu (Jilin)", "#2e6f9e"),
+  geoDot(42.04, 127.87, "Changbaishan 长白山 — resort skiing on the sacred volcano's flanks, by the North Korea border", "#2e6f9e"),
+  geoDot(47.84, 88.12, "Altay 阿勒泰 (General's Mountain) — China's powder frontier; local cave paintings are claimed as the world's oldest depiction of skiing (~10,000 years)", "#2e6f9e"),
+  geoLabel(48.1, 88.4, "Altay: powder + oldest skiing", "#2e6f9e"),
+  geoDot(48.57, 87.44, "Hemu 禾木 — Tuvan village backcountry; fur-skinned traditional skis still made here", "#2e6f9e"),
+  geoDot(30.90, 121.93, "Shanghai Lingang mega-dome — the world's largest indoor snow park, next door to Yangshan port", "#2e6f9e")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -903,6 +919,7 @@ const overlays = {
   profile: { el: "profile", chip: "tg-profile" },
   rail: { layer: railLayer, chip: "tg-rail" },
   porcelain: { layer: porcelainLayer, chip: "tg-porc" },
+  snow: { layer: snowLayer, chip: "tg-snow" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
