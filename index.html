@@ -944,12 +944,29 @@ const silkRoadLayer = L.layerGroup([
   tipLine(smoothOpen([[40.14,94.66],[39.02,88.17],[38.14,85.53],[37.07,82.69],[37.11,79.93],[38.42,77.24],[39.47,75.99]]),
     { color: "#b8860b", weight: 2.5, opacity: 0.9, dashArray: "1 6" },
     "Southern route: the Kunlun's north foot — Ruoqiang, Qiemo, Niya, Khotan (the jade oasis), Yarkand — to Kashgar. The Taklamakan's name is folk-glossed 'go in and you won't come out'"),
-  ...arrowPath([[39.47,75.99],[39.3,74.7],[39.1,73.8]], "#b8860b",
-    "Over the Pamirs — to Samarkand, Persia, and Rome. Silk went west; horses, glass, Buddhism, and Islam came east"),
+  // Western trunk: Kashgar over the Pamirs, across Transoxiana and Persia to the Mediterranean (city coords from OSM/Nominatim, scripts/fetch_silkroad_coords.py)
+  tipLine(smoothOpen([[39.4666,75.99],[39.68,73.92],[40.1083,73.1931],[40.2842,69.6191],[39.655,66.9757],[39.776,64.4152],[37.594,61.8398],[36.2106,58.7922],[35.57,53.4],[35.5904,51.4367],[34.9726,48.6564],[33.1585,44.7778]]),
+    { color: "#b8860b", weight: 3, opacity: 0.9 },
+    "Western trunk: over the Pamirs → Osh → Samarkand → Bukhara → Merv → Nishapur → Rayy (Tehran) → Hamadan → Ctesiphon (Baghdad). Persia was the great middleman, marking up the silk before it reached Rome"),
+  ...arrowPath([[33.1585,44.7778],[34.0,42.0],[34.556,38.281],[33.9,37.2],[33.5131,36.3096],[33.35,35.6],[33.2721,35.1964]], "#b8860b",
+    "Baghdad → Palmyra (the desert caravan city) → Damascus → Tyre on the Mediterranean coast — where cargo took ship for Rome"),
+  ...arrowPath([[34.556,38.281],[35.2,37.1],[36.2026,36.1641]], "#b8860b",
+    "Northern spur to Antioch — the other great Levantine terminus, gateway to the Roman world"),
+  ...arrowPath(smoothOpen([[36.2026,36.1641],[35.6,33.5],[35.0,29.0],[35.4,24.5],[36.8,21.5],[37.9,15.7],[40.6,14.2],[41.75,12.35]]), "#2e6f9e",
+    "By sea across the Mediterranean → Ostia, the port of Rome. To the Romans it was 'Serica', land of silk; they never knew its source"),
+  // Southern branch: the Buddhism-transmission road through Bactria and Gandhara to India
+  tipLine(smoothOpen([[39.655,66.9757],[36.7581,66.898],[34.75,67.25],[33.7423,72.8145]]),
+    { color: "#4E2A84", weight: 2.5, opacity: 0.85, dashArray: "1 6" },
+    "Southern branch → India: Samarkand → Balkh (Bactria) → Bamiyan (the giant Buddhas) → Taxila (Gandhara). This is the road Buddhism travelled north into China"),
   geoLabel(38.6, 99.6, "Hexi Corridor", "#b8860b"),
   geoLabel(42.9, 84.5, "northern route", "#b8860b"),
   geoLabel(36.6, 83.5, "southern route", "#b8860b"),
-  geoLabel(38.6, 73.6, "→ Samarkand & Rome", "#b8860b")
+  geoLabel(40.4, 66.9, "Samarkand", "#b8860b"),
+  geoLabel(37.9, 61.8, "Merv", "#b8860b"),
+  geoLabel(33.9, 44.4, "Baghdad", "#b8860b"),
+  geoLabel(32.8, 36.0, "Damascus & Tyre", "#b8860b"),
+  geoLabel(42.3, 12.5, "Rome", "#2e6f9e"),
+  geoLabel(34.4, 68.5, "→ India (Buddhism)", "#4E2A84")
 ]);
 
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
