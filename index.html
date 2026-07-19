@@ -871,19 +871,23 @@ const porcelainLayer = L.layerGroup([
   geoLabel(21.3, 115.2, "export → the world", "#b8860b")
 ]);
 
-// Snow: China's snowboarding geography — Olympic cluster, northeast cold-snow belt, Xinjiang powder, indoor absurdity
+// Snow: China's snowboarding geography. Resort coordinates resolved from OSM/Nominatim (scripts/fetch_snow_coords.py)
 const snowLayer = L.layerGroup([
-  geoDot(40.97, 115.28, "Chongli 崇礼 — the 2022 Olympic snow cluster (Thaiwoo, Genting, Fulong); ~1h HSR from Beijing; guochao snow culture and Nobaday flagship stores", "#2e6f9e"),
-  geoLabel(41.2, 115.5, "Chongli (Olympic cluster)", "#2e6f9e"),
-  geoDot(44.82, 128.45, "Yabuli 亚布力 — China's oldest major resort, in Heilongjiang's cold-snow belt", "#2e6f9e"),
-  geoLabel(45.05, 128.65, "Yabuli", "#2e6f9e"),
-  geoDot(43.29, 126.68, "Beidahu 北大湖 + Songhua Lake — Jilin's powder belt: the Northeast's best terrain and driest snow", "#2e6f9e"),
-  geoLabel(43.0, 126.9, "Beidahu (Jilin)", "#2e6f9e"),
-  geoDot(42.04, 127.87, "Changbaishan 长白山 — resort skiing on the sacred volcano's flanks, by the North Korea border", "#2e6f9e"),
-  geoDot(47.84, 88.12, "Altay 阿勒泰 (General's Mountain) — China's powder frontier; local cave paintings are claimed as the world's oldest depiction of skiing (~10,000 years)", "#2e6f9e"),
-  geoLabel(48.1, 88.4, "Altay: powder + oldest skiing", "#2e6f9e"),
-  geoDot(48.57, 87.44, "Hemu 禾木 — Tuvan village backcountry; fur-skinned traditional skis still made here", "#2e6f9e"),
-  geoDot(30.90, 121.93, "Shanghai Lingang mega-dome — the world's largest indoor snow park, next door to Yangshan port", "#2e6f9e")
+  geoDot(40.9483, 115.4186, "Chongli 崇礼 Olympic cluster — pinned at Genting Snow Park (2022 Olympic freestyle/SBD venue); Thaiwoo and Fulong adjacent; ~1h HSR from Beijing; Nobaday flagship stores", "#2e6f9e"),
+  geoLabel(41.15, 115.6, "Chongli (Olympic cluster)", "#2e6f9e"),
+  geoDot(44.7752, 128.4542, "Yabuli 亚布力 — China's oldest major resort, in Heilongjiang's cold-snow belt", "#2e6f9e"),
+  geoLabel(45.0, 128.65, "Yabuli", "#2e6f9e"),
+  geoDot(43.4113, 126.6185, "Beidahu 北大湖 — Jilin's biggest terrain; with Songhua Lake, the heart of the Northeast's dry-snow belt", "#2e6f9e"),
+  geoLabel(43.15, 126.85, "Beidahu (Jilin)", "#2e6f9e"),
+  geoDot(43.6752, 126.6146, "Songhua Lake 松花湖 — Jilin City's resort; Su Yiming's home mountain", "#2e6f9e"),
+  geoDot(42.1038, 127.4969, "Changbaishan (Wanda resort) 长白山 — skiing on the sacred volcano's flanks, near the North Korea border", "#2e6f9e"),
+  geoDot(47.8260, 88.1572, "General's Mountain 将军山, Altay city — night skiing above town; the cave paintings claimed as the world's oldest depiction of skiing (~10,000 yrs) are nearby", "#2e6f9e"),
+  geoLabel(48.05, 88.4, "Altay: powder + oldest skiing", "#2e6f9e"),
+  geoDot(47.1747, 90.0606, "Koktokay 可可托海 (Fuyun county) — Altay region's big-vertical powder resort", "#2e6f9e"),
+  geoDot(48.5692, 87.4304, "Hemu 禾木 — Tuvan village backcountry; fur-skinned traditional skis still made here", "#2e6f9e"),
+  geoDot(30.9217, 121.9021, "Yaoxue (L*SNOW) Lingang — the world's largest indoor snow park, next door to Yangshan port", "#2e6f9e"),
+  geoDot(23.11, 114.42, "Huizhou 惠州 — GP87's factory city (city-level pin): the premier Chinese snowboard OEM, Flow-founder lineage, Shenzhen ops; part of the PRD composites belt that builds much of the world's boards (the other giant OEM, SWS, is in Dubai)", "#4E2A84"),
+  geoLabel(22.85, 114.6, "GP87 (OEM, Huizhou)", "#4E2A84")
 ]);
 
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
