@@ -141,6 +141,7 @@
   <span class="chip" id="tg-porc">Porcelain routes</span>
   <span class="chip" id="tg-snow">Snow</span>
   <span class="chip" id="tg-3riv">3 parallel rivers</span>
+  <span class="chip" id="tg-silk">Silk Road</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -669,7 +670,19 @@ const storyLayer = L.layerGroup([
   geoDot(32.40, 111.00, "Wudang Mountains 武当山 — Taoist monastic complex; the mythic home of tai chi and 'internal' martial arts", "#0e8f7e"),
   geoLabel(32.65, 111.2, "Wudang", "#0e8f7e"),
   geoDot(26.57, 114.17, "Jinggangshan 井冈山 — Mao's first rural base (1927): where 'surround the cities from the countryside' began", "#8a2e18"),
-  geoLabel(26.25, 114.35, "Jinggangshan", "#8a2e18")
+  geoLabel(26.25, 114.35, "Jinggangshan", "#8a2e18"),
+  geoDot(42.95, 89.18, "Turpan 吐鲁番 — oasis in a depression 150m below sea level; karez underground irrigation channels; grapes, raisins, and the Flaming Mountains of Journey to the West", "#0e8f7e"),
+  geoLabel(43.2, 89.4, "Turpan", "#0e8f7e"),
+  geoDot(39.77, 98.29, "Jiayuguan 嘉峪关 — the western terminus of the Ming Great Wall: 'the last gate under heaven'; beyond it, exile", "#8a2e18"),
+  geoLabel(40.0, 98.5, "Jiayuguan (Wall's end)", "#8a2e18"),
+  geoDot(37.11, 79.93, "Khotan/Hotan 和田 — the jade oasis: nephrite from its rivers reached Shang and Sanxingdui workshops 3,000+ years ago; the original long-distance trade on this road", "#4E2A84"),
+  geoLabel(36.85, 80.15, "Khotan (jade)", "#4E2A84"),
+  geoDot(28.14, 86.85, "Everest north base camp 珠峰大本营 — the Tibet side: drivable, permit required; the mountain's Tibetan name is Qomolangma", "#0e8f7e"),
+  geoDot(31.07, 81.31, "Mount Kailash 冈仁波齐 — sacred to Buddhists, Hindus, Jains, and Bon; never climbed; pilgrims walk the 52km kora around it", "#0e8f7e"),
+  geoLabel(31.35, 81.5, "Kailash", "#0e8f7e"),
+  geoDot(29.77, 95.0, "Yarlung Tsangpo Grand Canyon — Earth's deepest canyon, where the river bends around Namcha Barwa into India as the Brahmaputra; site of the planned Medog mega-dam (a live China–India flashpoint)", "#8a2e18"),
+  geoLabel(29.5, 95.3, "Tsangpo canyon", "#8a2e18"),
+  geoDot(36.89, 100.18, "Qinghai Lake 青海湖 — China's largest lake, saline, at 3,200m; the province's namesake ('blue sea')", "#0e8f7e")
 ]);
 
 // Yangtze & Grand Canal: real Yangtze geometry (NE 10m) + digitized estuary continuation past Zhenjiang
@@ -903,6 +916,26 @@ const parallelRiversLayer = L.layerGroup([
   geoLabel(24.6, 98.2, "Nu → Myanmar", "#8a2e18")
 ]);
 
+// Silk Road: main corridor + the two Tarim-rim branches, routed oasis-to-oasis through the documented caravan towns.
+// Historical route (schematic between towns); the oasis waypoints are the real historical fixed points.
+const silkRoadLayer = L.layerGroup([
+  tipLine(smoothOpen([[34.34,108.94],[34.36,107.2],[34.58,105.72],[36.06,103.83],[37.93,102.64],[38.93,100.45],[39.74,98.52],[39.77,98.29],[40.14,94.66]]),
+    { color: "#b8860b", weight: 3, opacity: 0.9 },
+    "The trunk: Chang'an (Xi'an) → Lanzhou → the Hexi Corridor's oasis chain (Wuwei, Zhangye, Jiuquan) → Jiayuguan → Dunhuang, where the desert forks the road"),
+  tipLine(smoothOpen([[40.14,94.66],[42.83,93.51],[42.95,89.18],[41.73,86.15],[41.72,82.96],[41.17,80.26],[39.47,75.99]]),
+    { color: "#b8860b", weight: 2.5, opacity: 0.9, dashArray: "1 6" },
+    "Northern route: skirting the Taklamakan's north rim under the Tianshan — Hami, Turpan, Korla, Kucha, Aksu — to Kashgar"),
+  tipLine(smoothOpen([[40.14,94.66],[39.02,88.17],[38.14,85.53],[37.07,82.69],[37.11,79.93],[38.42,77.24],[39.47,75.99]]),
+    { color: "#b8860b", weight: 2.5, opacity: 0.9, dashArray: "1 6" },
+    "Southern route: the Kunlun's north foot — Ruoqiang, Qiemo, Niya, Khotan (the jade oasis), Yarkand — to Kashgar. The Taklamakan's name is folk-glossed 'go in and you won't come out'"),
+  ...arrowPath([[39.47,75.99],[39.3,74.7],[39.1,73.8]], "#b8860b",
+    "Over the Pamirs — to Samarkand, Persia, and Rome. Silk went west; horses, glass, Buddhism, and Islam came east"),
+  geoLabel(38.6, 99.6, "Hexi Corridor", "#b8860b"),
+  geoLabel(42.9, 84.5, "northern route", "#b8860b"),
+  geoLabel(36.6, 83.5, "southern route", "#b8860b"),
+  geoLabel(38.6, 73.6, "→ Samarkand & Rome", "#b8860b")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -938,6 +971,7 @@ const overlays = {
   porcelain: { layer: porcelainLayer, chip: "tg-porc" },
   snow: { layer: snowLayer, chip: "tg-snow" },
   parallelrivers: { layer: parallelRiversLayer, chip: "tg-3riv" },
+  silkroad: { layer: silkRoadLayer, chip: "tg-silk" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
