@@ -33,9 +33,21 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.12);
   }
 
-  #header { top: 14px; left: 14px; padding: 10px 16px; max-width: 300px; }
+  #header { top: 14px; left: 14px; padding: 10px 16px; max-width: 320px; }
   #header h1 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
   #header p { margin: 3px 0 0; font-size: 12px; color: var(--text-2); }
+
+  #tour { margin-top: 9px; border-top: 1px solid var(--panel-border); padding-top: 8px; }
+  #tour .tour-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2); margin-bottom: 6px; }
+  #tour-btns { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tour-btn {
+    font-size: 11px; padding: 3px 8px; border-radius: 6px; cursor: pointer; white-space: nowrap;
+    border: 1px solid var(--panel-border); background: transparent; color: var(--text);
+  }
+  .tour-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tour-btn .n { color: var(--text-2); font-weight: 600; margin-right: 3px; }
+  .tour-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tour-btn.active .n { color: rgba(255,255,255,0.8); }
 
   #toggles { top: 14px; right: 14px; padding: 8px 10px; display: flex; gap: 6px; flex-wrap: wrap; max-width: 340px; }
   .chip {
@@ -120,6 +132,10 @@
 <div class="hud" id="header">
   <h1>China, region by region</h1>
   <p>Click a region, province, or city dot — then ask Claude about it. Claude can see your clicks and drive this map.</p>
+  <div id="tour">
+    <div class="tour-title">Guided tour — jump to a stop</div>
+    <div id="tour-btns"></div>
+  </div>
 </div>
 
 <div class="hud" id="toggles">
@@ -1104,8 +1120,62 @@ window.claudeAPI = {
   pulse, clearPulse, caption, clearCaption,
   overlay: setOverlay,
   reset: resetView,
+  goToStop,
   getEvents: () => window.__events.slice()
 };
+
+// ---------- Guided tour navigator ----------
+const STOPS = [
+  { num: "", label: "Foundations", foundations: true, on: ["huline", "nsline", "terrain"],
+    caption: "Foundations: the terrain staircase, the Hu Line (94% of people east of it), and the Qinling–Huai north/south divide. Everything else is downstream of these three facts." },
+  { num: "1", label: "North China", region: "north",
+    caption: "Stop 1: North China — the political and civilizational heartland. Wheat, the Yellow River, and proximity to power." },
+  { num: "2", label: "Northeast", region: "northeast",
+    caption: "Stop 2: the Northeast (Dongbei) — China's rust belt. Manchu homeland, industrialized first, declined first." },
+  { num: "3", label: "Yangtze Delta", region: "delta",
+    caption: "Stop 3: the Yangtze Delta — the economic engine. ~¼ of China's GDP on ~4% of its land." },
+  { num: "4", label: "South Coast", region: "south",
+    caption: "Stop 4: the South Coast (Lingnan) — the gateway. First to open, most connected to the world." },
+  { num: "5", label: "Central", region: "central",
+    caption: "Stop 5: Central China — the crossroads. The rice bowl that birthed both the republic (1911) and the PLA (1927)." },
+  { num: "6", label: "Southwest", region: "southwest", on: ["parallelrivers"],
+    caption: "Stop 6: the Southwest — Sichuan's walled garden, Chongqing's vertical city, and Yunnan's three parallel rivers." },
+  { num: "7", label: "Northwest", region: "northwest", on: ["silkroad", "terrain"],
+    caption: "Stop 7: the Northwest — the Hexi Corridor, the Silk Road frontier, and the road that named globalization 1.0." },
+  { num: "8", label: "Tibet", region: "tibet", on: ["terrain"],
+    caption: "Stop 8: Tibet — the roof of the world, the water tower of Asia, and the most contested sacred geography on Earth." },
+  { num: "★", label: "Taiwan", view: [24.4, 120.6, 6.5], pulse: [25.03, 121.57, "Taipei"],
+    caption: "Finale: Taiwan — governed separately since 1949, and the hinge of US–China relations." }
+];
+// Overlays the tour curates per stop (reset on each jump); reference layers like story pins are left untouched
+const TOUR_OVERLAYS = ["huline", "nsline", "terrain", "silkroad", "parallelrivers"];
+
+function goToStop(i) {
+  const s = STOPS[i];
+  if (!s) return;
+  map.invalidateSize();
+  TOUR_OVERLAYS.forEach(id => setOverlay(id, false));
+  (s.on || []).forEach(id => setOverlay(id, true));
+  if (s.foundations) resetView();
+  else if (s.region) focusRegion(s.region);
+  else if (s.view) {
+    activeRegion = null; applyStyles(); markLegend(null); closePanel();
+    map.flyTo([s.view[0], s.view[1]], s.view[2], { duration: 1.1 });
+  }
+  if (s.pulse) pulse(s.pulse[0], s.pulse[1], s.pulse[2]); else clearPulse();
+  if (s.caption) caption(s.caption);
+  document.querySelectorAll(".tour-btn").forEach((b, bi) => b.classList.toggle("active", bi === i));
+  logEvent("stop", s.label);
+}
+
+const tourBtns = document.getElementById("tour-btns");
+STOPS.forEach((s, i) => {
+  const b = document.createElement("button");
+  b.className = "tour-btn";
+  b.innerHTML = (s.num ? `<span class="n">${s.num}</span>` : "") + s.label;
+  b.onclick = () => goToStop(i);
+  tourBtns.appendChild(b);
+});
 </script>
 </body>
 </html>
