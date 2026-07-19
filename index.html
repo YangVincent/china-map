@@ -1122,9 +1122,12 @@ const culturalTibetBand = L.polygon(
 culturalTibetBand.bindTooltip("Cultural Tibet — approximate ethnographic extent (Ü-Tsang + Amdo + Kham). The TAR (the highlighted region) is only the western ~half; more Tibetans live east of it, in Qinghai, Sichuan, Gansu, and Yunnan.", { sticky: true, className: "prov-tip" });
 const culturalTibetLayer = L.layerGroup([
   culturalTibetBand,
-  geoLabel(30.5, 87.5, "Ü-Tsang (≈ the TAR)", "#8e44ad"),
-  geoLabel(35.3, 98.5, "Amdo (Qinghai / Gansu)", "#8e44ad"),
-  geoLabel(30.5, 100.2, "Kham (W Sichuan / NW Yunnan)", "#8e44ad"),
+  // rough dividers between the three traditional provinces of ethnographic Tibet
+  L.polyline(smoothOpen([[35.5,92.3],[33.0,92.6],[30.5,93.0],[28.2,93.5]]), { color: "#8e44ad", weight: 1.5, opacity: 0.7, dashArray: "3 5" }),
+  L.polyline(smoothOpen([[33.6,93.0],[33.3,96.5],[32.6,99.5],[31.5,102.5]]), { color: "#8e44ad", weight: 1.5, opacity: 0.7, dashArray: "3 5" }),
+  geoLabel(30.8, 86.5, "Ü-Tsang (central; ≈ the TAR)", "#8e44ad"),
+  geoLabel(35.6, 97.5, "Amdo (NE — Qinghai / Gansu)", "#8e44ad"),
+  geoLabel(29.8, 99.8, "Kham (SE — W Sichuan / NW Yunnan)", "#8e44ad"),
   geoLabel(27.3, 90.4, "Bhutan — sovereign; same Buddhist world", "#5f5e5a"),
   geoLabel(33.9, 77.2, "Ladakh (India) — 'Little Tibet'", "#5f5e5a"),
   geoLabel(27.5, 85.4, "Nepal (Sherpa/Mustang highlands)", "#5f5e5a")
