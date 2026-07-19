@@ -162,6 +162,8 @@
   <span class="chip" id="tg-krkm">Karakoram Hwy</span>
   <span class="chip" id="tg-ili">Arnaud RV Trip</span>
   <span class="chip" id="tg-xpcc">XPCC cities</span>
+  <span class="chip" id="tg-ctib">Cultural Tibet</span>
+  <span class="chip" id="tg-medog">Medog dam</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -1110,6 +1112,36 @@ const xpccLayer = L.layerGroup([
   capitalRing(42.8255, 93.513, "Hami (Kumul) — eastern gateway prefecture")
 ]);
 
+// Cultural Tibet: the approximate ethnographic extent (Ü-Tsang + Amdo + Kham) vs the TAR administrative region (the region polygon)
+const culturalTibetBand = L.polygon(
+  smoothClosed([[35.0,78.5],[36.2,82.0],[36.3,88.0],[36.0,92.0],[36.2,96.0],[37.5,98.5],[37.8,101.5],[36.0,103.2],[34.0,102.8],[32.5,103.2],[30.5,102.3],[28.5,100.3],[27.5,99.8],[28.0,98.3],[28.3,96.5],[28.5,95.3],[27.9,92.0],[27.9,89.5],[28.1,86.0],[29.5,82.0],[31.0,80.0],[33.0,79.0]]),
+  { color: "#8e44ad", weight: 2, fillColor: "#8e44ad", fillOpacity: 0.08, dashArray: "7 5" });
+culturalTibetBand.bindTooltip("Cultural Tibet — approximate ethnographic extent (Ü-Tsang + Amdo + Kham). The TAR (the highlighted region) is only the western ~half; more Tibetans live east of it, in Qinghai, Sichuan, Gansu, and Yunnan.", { sticky: true, className: "prov-tip" });
+const culturalTibetLayer = L.layerGroup([
+  culturalTibetBand,
+  geoLabel(30.5, 87.5, "Ü-Tsang (≈ the TAR)", "#8e44ad"),
+  geoLabel(35.3, 98.5, "Amdo (Qinghai / Gansu)", "#8e44ad"),
+  geoLabel(30.5, 100.2, "Kham (W Sichuan / NW Yunnan)", "#8e44ad"),
+  geoLabel(27.3, 90.4, "Bhutan — sovereign; same Buddhist world", "#5f5e5a"),
+  geoLabel(33.9, 77.2, "Ladakh (India) — 'Little Tibet'", "#5f5e5a"),
+  geoLabel(27.5, 85.4, "Nepal (Sherpa/Mustang highlands)", "#5f5e5a")
+]);
+
+// Medog mega-dam: the planned Yarlung Tsangpo project at the Great Bend, and its downstream Brahmaputra path (real geometry)
+const medogLayer = L.layerGroup([
+  ...geoRiverMulti(RIVERS.yarlung, "Yarlung Tsangpo 雅鲁藏布江 — runs the length of the plateau to the Great Bend", { color: "#c2452d", weight: 3 }),
+  ...geoRiverMulti(RIVERS.brahmaputra, "Brahmaputra — the Tsangpo's downstream self: through Arunachal (as the Siang), across Assam, into Bangladesh (as the Jamuna), to the Bay of Bengal", { color: "#c2452d", weight: 3 }),
+  geoDot(29.65, 95.4, "Medog / Motuo mega-dam (approved) — on the Yarlung Tsangpo's Great Bend, where the river drops ~2,000m around Namcha Barwa. Planned ~60 GW, roughly 3× the Three Gorges: the largest hydropower project ever proposed.", "#000000"),
+  geoLabel(30.05, 95.5, "Medog mega-dam", "#000000"),
+  geoDot(28.1, 95.3, "Arunachal Pradesh (India) — the river enters as the Siang; India, alarmed, is building its own Siang Upper dam as a buffer", "#c2452d"),
+  geoLabel(27.7, 94.6, "Arunachal (India)", "#c2452d"),
+  geoDot(26.14, 91.73, "Assam (Guwahati) — the Brahmaputra's floodplain heartland; ~30M people depend on its flow and silt", "#c2452d"),
+  geoLabel(25.7, 91.3, "Assam", "#c2452d"),
+  geoDot(24.0, 89.83, "Bangladesh — the Jamuna joins the Ganges; the delta's water, silt, and dry-season flow are all at stake", "#c2452d"),
+  geoLabel(23.5, 89.3, "Bangladesh", "#c2452d"),
+  geoLabel(21.9, 90.9, "Bay of Bengal", "#c2452d")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -1150,6 +1182,8 @@ const overlays = {
   karakoram: { layer: karakoramLayer, chip: "tg-krkm" },
   ili: { layer: iliTripLayer, chip: "tg-ili" },
   xpcc: { layer: xpccLayer, chip: "tg-xpcc" },
+  culturaltibet: { layer: culturalTibetLayer, chip: "tg-ctib" },
+  medog: { layer: medogLayer, chip: "tg-medog" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
