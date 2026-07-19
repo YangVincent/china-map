@@ -846,6 +846,27 @@ function railLine(pts, tip, dash) {
   line.bindTooltip(tip, { sticky: true, className: "prov-tip" });
   return [casing, line];
 }
+// HSR nodes: every HSR-connected provincial capital (China's grid reaches all of them except Lhasa)
+const HSR_NODES = [
+  [39.90,116.40,"Beijing"],[39.13,117.20,"Tianjin"],[38.04,114.51,"Shijiazhuang"],[37.87,112.54,"Taiyuan"],[40.82,111.66,"Hohhot"],
+  [41.80,123.43,"Shenyang"],[43.88,125.32,"Changchun"],[45.80,126.53,"Harbin"],[36.65,117.11,"Jinan"],[36.07,120.38,"Qingdao"],
+  [34.75,113.62,"Zhengzhou"],[32.06,118.80,"Nanjing"],[31.23,121.47,"Shanghai"],[30.27,120.15,"Hangzhou"],[31.82,117.23,"Hefei"],
+  [30.59,114.30,"Wuhan"],[28.23,112.94,"Changsha"],[28.65,116.03,"Nanchang"],[26.08,119.29,"Fuzhou"],[24.48,118.09,"Xiamen"],
+  [23.13,113.26,"Guangzhou"],[22.54,114.06,"Shenzhen"],[22.82,108.32,"Nanning"],[30.66,104.06,"Chengdu"],[29.56,106.55,"Chongqing"],
+  [26.65,106.63,"Guiyang"],[25.04,102.71,"Kunming"],[34.34,108.94,"Xi'an"],[36.06,103.83,"Lanzhou"],[36.82,101.44,"Xining"],
+  [38.49,106.23,"Yinchuan"],[43.82,87.61,"Ürümqi"]
+];
+function hsrNode(lat, lng, name) {
+  const m = L.circleMarker([lat, lng], { radius: 3.5, color: "#0e8f7e", weight: 1, fillColor: "#0e8f7e", fillOpacity: 0.9 });
+  m.bindTooltip(name + " — HSR-connected", { className: "prov-tip" });
+  return m;
+}
+function dryPort(lat, lng, tip) {
+  const m = L.marker([lat, lng], { interactive: true, zIndexOffset: 1100, icon: L.divIcon({ className: "", iconSize: [13, 13], iconAnchor: [6, 6],
+    html: `<div style="width:9px;height:9px;background:#b8860b;border:1.5px solid #fff;transform:rotate(45deg);box-shadow:0 1px 2px rgba(0,0,0,.4)"></div>` }) });
+  m.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return m;
+}
 const railLayer = L.layerGroup([
   ...railLine([[39.9,116.4],[39.1,117.2],[36.67,117.0],[34.26,117.2],[32.9,117.35],[32.06,118.8],[31.8,119.97],[31.57,120.3],[31.3,120.6],[31.23,121.47]],
     "Beijing–Shanghai HSR (京沪) — the world's busiest rail line by revenue; 1,318 km in ~4.5 hours"),
@@ -866,7 +887,15 @@ const railLayer = L.layerGroup([
   ...railLine([[36.62,101.77],[36.9,100.0],[37.37,97.37],[36.4,94.9],[35.62,94.06],[34.22,92.44],[32.9,91.9],[31.48,92.05],[30.48,91.1],[29.65,91.14]],
     "Qinghai–Tibet railway (青藏) — conventional rail, the world's highest: 5,072 m at Tanggula Pass, oxygen-fed carriages", "6 5"),
   geoLabel(43.4, 89.0, "Land Bridge → Europe", "#3a3a3a"),
-  geoLabel(33.6, 92.6, "Qinghai–Tibet line", "#3a3a3a")
+  geoLabel(33.6, 92.6, "Qinghai–Tibet line", "#3a3a3a"),
+  ...HSR_NODES.map(n => hsrNode(n[0], n[1], n[2])),
+  geoLabel(44.3, 87.6, "Ürümqi — HSR W terminus", "#0e8f7e"),
+  L.circleMarker([29.6542, 91.1173], { radius: 5, color: "#c2452d", weight: 2, fillColor: "#fff", fillOpacity: 1 })
+    .bindTooltip("Lhasa — the ONLY provincial capital with no HSR; reached only by the conventional Qinghai–Tibet railway. The Sichuan–Tibet HSR is under construction.", { sticky: true, className: "prov-tip" }),
+  geoLabel(29.3, 91.3, "Lhasa — no HSR", "#c2452d"),
+  dryPort(45.1707, 82.5669, "Alashankou 阿拉山口 — the original China–Kazakhstan rail border crossing and dry port; where China–Europe freight trains change to Russian-gauge track"),
+  dryPort(44.2119, 80.403, "Khorgos 霍尔果斯 — the newer, larger China–Kazakhstan dry port + cross-border free-trade zone; now the busier of the two rail gateways"),
+  geoLabel(45.5, 82.4, "dry ports → Kazakhstan/Europe", "#b8860b")
 ]);
 
 // Porcelain routes: how Jingdezhen's product reached the court and the world
