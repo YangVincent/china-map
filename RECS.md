@@ -41,6 +41,7 @@ Mandarin difficulty key: 🟢 clear/standard-ish · 🟡 accented but followable
 
 ### Read
 - **_Against the Law: Labor Protests in China's Rustbelt and Sunbelt_** — Ching Kwan Lee. The definitive scholarly book comparing Northeast (rustbelt) and Guangdong (sunbelt) labor politics; covers Liaoyang 2002 in depth.
+- **_The Emperor's New Road: China and the Project of the Century_** — Jonathan Hillman. Belt & Road reported on the ground; the Khorgos chapter is the classic account of the dry-port boomtown's ambition-vs-reality gap.
 - **_Paying the Price: Worker Unrest in Northeast China_** — Human Rights Watch report (2002), free online. The primary documentation of the Liaoyang and Daqing protests.
 
 ## Northeast (Dongbei)
