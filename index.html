@@ -208,6 +208,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="china-geo.js"></script>
 <script src="china-rivers.js"></script>
+<script src="china-waterways.js"></script>
 <script>
 // ---------- Content ----------
 const REGIONS = {
@@ -833,18 +834,36 @@ const railLayer = L.layerGroup([
   geoLabel(33.6, 92.6, "Qinghai–Tibet line", "#3a3a3a")
 ]);
 
-// Porcelain routes: how Jingdezhen's product reached the court and the world (real Gan/Bei river geometry)
+// Porcelain routes: how Jingdezhen's product reached the court and the world
+// Chang River + Gan delta are real OSM waterway geometry (china-waterways.js via scripts/fetch_waterways.py)
+const CHANG_DOWN = (function () {
+  const c = WATERWAYS.chang.slice();
+  if (c[0][1] < c[c.length - 1][1]) c.reverse();            // upstream (NE) first
+  let bi = 0, bd = Infinity;
+  c.forEach((p, i) => { const d = (p[0] - 29.27) ** 2 + (p[1] - 117.18) ** 2; if (d < bd) { bd = d; bi = i; } });
+  return c.slice(bi);                                        // start at Jingdezhen's wharf, run downstream
+})();
+const GAN_DELTA_S = (function () {
+  const g = WATERWAYS.gandelta.slice();
+  if (g[0][0] < g[g.length - 1][0]) g.reverse();             // lake mouth (N) first
+  return g;
+})();
+// Short bridge from the fetched Chang endpoint to the lake, then open-water legs (hand-set, over water)
+const CHANG_TO_LAKE = [[29.03, 116.79], [28.99, 116.72]];
+const LAKE_N = [[29.02, 116.62], [29.05, 116.50], [29.12, 116.40], [29.22, 116.30], [29.35, 116.24], [29.50, 116.20], [29.62, 116.18], [29.73, 116.22], [30.02, 116.30]];
+const LAKE_SW = [[28.99, 116.62], [28.97, 116.50], [28.98, 116.38], [29.00, 116.28], [29.05, 116.18], [29.12, 116.10], [29.20, 116.06], [29.25, 116.05]];
 const porcelainLayer = L.layerGroup([
   ...geoRiverMulti(RIVERS.gan, "Gan River 赣江 — Jiangxi's spine and the export highway south", { weight: 2 }),
   ...geoRiverMulti(RIVERS.bei, "Bei River 北江 — from Meiling Pass down to Guangzhou", { weight: 2 }),
-  ...arrowPath([[29.27,117.18],[29.22,117.12],[29.10,116.95],[28.99,116.78],[28.98,116.67],[29.02,116.55],[29.10,116.45],[29.25,116.36],[29.45,116.30],[29.60,116.25],[29.73,116.22],[30.02,116.30]], "#0e8f7e",
-    "Tribute route: from Jingdezhen's wharf down the Chang River, past Poyang town where it becomes the Rao, through the lake's east bay, out at Hukou into the Yangtze — then the Grand Canal north (toggle Yangtze & Canal for the rest)"),
-  ...arrowPath([[29.27,117.18],[29.22,117.12],[29.10,116.95],[28.99,116.78],[28.98,116.67],[28.90,116.55],[28.80,116.42],[28.72,116.20],[28.68,115.89]]
-      .concat(riverSlice("gan", 28.55, 25.9))
+  ...arrowPath(CHANG_DOWN.concat(CHANG_TO_LAKE).concat(LAKE_N), "#0e8f7e",
+    "Tribute route: from Jingdezhen's wharf down the Chang River (real OSM geometry), past Poyang town, up the lake's shipping channel to Hukou and the Yangtze — then the Grand Canal north (toggle Yangtze & Canal for the rest)"),
+  ...arrowPath(CHANG_DOWN.concat(CHANG_TO_LAKE).concat(LAKE_SW)
+      .concat(GAN_DELTA_S.filter(p => p[0] >= 28.45))
+      .concat(riverSlice("gan", 28.45, 25.9))
       .concat([[25.85,114.93],[25.60,114.60],[25.39,114.36],[25.26,114.40],[25.12,114.31],[24.95,114.05],[24.81,113.60]])
       .concat(riverSlice("bei", 24.7, 23.55))
       .concat([[23.40,113.10],[23.13,113.26],[22.75,113.60],[22.2,113.9],[21.3,114.4],[20.6,114.9]]), "#b8860b",
-    "Export route: same wharf, opposite direction — across Poyang, up the Gan (real river geometry), porters over Meiling Pass (schematic portage), down the Bei (real) to Canton, then the ocean: Southeast Asia, India, Ottoman courts, Europe"),
+    "Export route: same wharf — down the Chang, across Poyang Lake to the Gan's mouth, up the Gan through Nanchang (real OSM + Natural Earth geometry), porters over Meiling Pass (schematic portage), down the Bei to Canton, then the ocean"),
   geoDot(25.32, 114.42, "Meiling Pass 梅关 — the porters' saddle between the two great river systems; for centuries, most of the world's porcelain crossed this one hill on shoulder poles", "#b8860b"),
   geoLabel(25.6, 114.75, "Meiling Pass", "#b8860b"),
   geoLabel(30.0, 117.4, "tribute → Beijing", "#0e8f7e"),
