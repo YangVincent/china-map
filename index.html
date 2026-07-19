@@ -161,6 +161,7 @@
   <span class="chip" id="tg-wall">Great Wall</span>
   <span class="chip" id="tg-krkm">Karakoram Hwy</span>
   <span class="chip" id="tg-ili">Ili trip</span>
+  <span class="chip" id="tg-xpcc">XPCC cities</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -1029,6 +1030,42 @@ const iliTripLayer = L.layerGroup([
   geoLabel(43.0, 82.5, "Tekes (now)", "#b02a6e")
 ]);
 
+// XPCC cities: the bingtuan's directly-administered enclave-cities scattered across the XUAR (coords from OSM). Squares = XPCC; hollow circles = regular prefecture capitals for contrast
+function xpccSquare(lat, lng, tip) {
+  const m = L.marker([lat, lng], { interactive: true, zIndexOffset: 1200, icon: L.divIcon({ className: "", iconSize: [12, 12], iconAnchor: [6, 6],
+    html: `<div style="width:10px;height:10px;background:#8e44ad;border:1.5px solid #fff;box-shadow:0 1px 2px rgba(0,0,0,.4)"></div>` }) });
+  m.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return m;
+}
+function capitalRing(lat, lng, tip) {
+  const m = L.circleMarker([lat, lng], { radius: 5, color: "#5f5e5a", weight: 1.5, fillColor: "#fff", fillOpacity: 0.9 });
+  m.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return m;
+}
+const xpccLayer = L.layerGroup([
+  xpccSquare(44.3017, 86.0776, "Shihezi 石河子 — the flagship bingtuan city (8th Division), built from bare desert; ~700k people, Shihezi University, chemicals, textiles, polysilicon (TBEA)"),
+  geoLabel(44.55, 86.0, "Shihezi", "#8e44ad"),
+  xpccSquare(44.1654, 87.5402, "Wujiaqu 五家渠 (6th Division) — satellite city just north of Ürümqi"),
+  xpccSquare(40.5422, 81.2771, "Aral 阿拉尔 (1st Division) — on the Tarim's edge; Tarim University; cotton heartland of the south"),
+  geoLabel(40.25, 81.3, "Aral", "#8e44ad"),
+  xpccSquare(39.8665, 79.0724, "Tumushuk 图木舒克 (3rd Division) — in the Kashgar oasis belt of the south"),
+  geoLabel(39.6, 78.7, "Tumushuk", "#8e44ad"),
+  xpccSquare(47.3249, 87.8307, "Beitun 北屯 (10th Division) — the far-north outpost in Altay, near the borders"),
+  geoLabel(47.55, 87.9, "Beitun", "#8e44ad"),
+  xpccSquare(41.8629, 85.6682, "Tiemenguan 铁门关 (2nd Division) — beside Korla, guarding the Tarim's north gate"),
+  xpccSquare(44.8423, 82.361, "Shuanghe 双河 (5th Division) — in Bortala, near the Kazakhstan border"),
+  xpccSquare(43.9314, 80.9989, "Kekedala 可克达拉 (4th Division) — in the Ili valley near Yining"),
+  xpccSquare(37.2142, 79.2675, "Kunyu 昆玉 (14th Division) — the deep-south enclave beside Hotan"),
+  geoLabel(37.0, 78.9, "Kunyu", "#8e44ad"),
+  xpccSquare(44.6936, 84.8251, "Huyanghe 胡杨河 (7th Division) — beside the Karamay oilfields"),
+  xpccSquare(43.6, 93.5, "Xinxing 新星 (13th Division) — the newest bingtuan city (2021), near Hami in the east (approximate location)"),
+  capitalRing(43.8244, 87.6139, "Ürümqi — the XUAR (regular autonomous-region government) capital"),
+  geoLabel(44.05, 87.6, "Ürümqi (XUAR capital)", "#5f5e5a"),
+  capitalRing(39.4666, 75.99, "Kashgar — regular prefecture capital, Uyghur south"),
+  capitalRing(37.111, 79.9209, "Hotan — regular prefecture capital, Uyghur south"),
+  capitalRing(41.6732, 85.7162, "Korla — regular prefecture capital (Bayingolin)")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -1068,6 +1105,7 @@ const overlays = {
   greatwall: { layer: greatWallLayer, chip: "tg-wall" },
   karakoram: { layer: karakoramLayer, chip: "tg-krkm" },
   ili: { layer: iliTripLayer, chip: "tg-ili" },
+  xpcc: { layer: xpccLayer, chip: "tg-xpcc" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
