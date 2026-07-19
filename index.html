@@ -158,6 +158,8 @@
   <span class="chip" id="tg-snow">Snow</span>
   <span class="chip" id="tg-3riv">3 parallel rivers</span>
   <span class="chip" id="tg-silk">Silk Road</span>
+  <span class="chip" id="tg-wall">Great Wall</span>
+  <span class="chip" id="tg-krkm">Karakoram Hwy</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -969,6 +971,27 @@ const silkRoadLayer = L.layerGroup([
   geoLabel(34.4, 68.5, "→ India (Buddhism)", "#4E2A84")
 ]);
 
+// Great Wall: the Ming wall's approximate course through its major passes (coords from OSM), + the older Han wall's western reach
+const greatWallLayer = L.layerGroup([
+  tipLine(smoothOpen([[39.8,98.29],[37.9278,102.6349],[38.9869,106.3772],[38.2851,109.729],[39.03,112.87],[40.0923,113.2953],[40.3509,116.004],[40.4345,116.5606],[40.666,117.2752],[39.9988,119.7564],[39.96,119.83]]),
+    { color: "#4a4744", weight: 2.5, opacity: 0.9 },
+    "Ming Great Wall (approximate course, 14th–17th c.): Jiayuguan → the Ordos edge → Yanmen Pass → Datong → the Beijing passes (Badaling, Mutianyu, Jinshanling) → Shanhaiguan, where it meets the sea at 'Old Dragon's Head'. ~8,850 km all-in"),
+  tipLine(smoothOpen([[39.8,98.29],[40.05,96.4],[40.2709,93.9307]]),
+    { color: "#4a4744", weight: 2, opacity: 0.7, dashArray: "5 5" },
+    "Han-era wall (2nd c. BC): reached ~300 km further west than the Ming wall, past Dunhuang to the Jade Gate (Yumenguan), guarding the Silk Road's start"),
+  geoLabel(39.4, 97.6, "Jiayuguan (W end)", "#4a4744"),
+  geoLabel(41.0, 116.0, "Beijing passes", "#4a4744"),
+  geoLabel(40.2, 120.4, "→ meets the sea", "#4a4744")
+]);
+
+// Karakoram Highway: modern China–Pakistan road over the world's highest paved border crossing, on an ancient Silk Road branch
+const karakoramLayer = L.layerGroup([
+  ...arrowPath([[39.4666,75.99],[37.7708,75.2281],[36.8501,75.4283],[36.6897,74.8206],[35.9208,74.314],[34.9292,72.879],[34.1436,73.2133],[33.6938,73.0652]], "#c2452d",
+    "Karakoram Highway (KKH): Kashgar → Tashkurgan → Khunjerab Pass (4,700m, world's highest paved border crossing) → Gilgit → Islamabad. Built 1966–79 at the cost of ~1,000 lives; follows the ancient mountain branch to Gandhara; today the spine of the China–Pakistan Economic Corridor"),
+  geoLabel(36.9, 76.4, "Khunjerab Pass", "#c2452d"),
+  geoLabel(33.3, 72.6, "Islamabad", "#c2452d")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -1005,6 +1028,8 @@ const overlays = {
   snow: { layer: snowLayer, chip: "tg-snow" },
   parallelrivers: { layer: parallelRiversLayer, chip: "tg-3riv" },
   silkroad: { layer: silkRoadLayer, chip: "tg-silk" },
+  greatwall: { layer: greatWallLayer, chip: "tg-wall" },
+  karakoram: { layer: karakoramLayer, chip: "tg-krkm" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
