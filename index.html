@@ -1033,6 +1033,7 @@ function regionPanelHTML(id) {
 function focusRegion(id) {
   const r = REGIONS[id];
   if (!r) return;
+  map.invalidateSize();
   activeRegion = id;
   applyStyles(); markLegend(id);
   const group = L.featureGroup(r.provinces.map(a => provLayers[a]).filter(Boolean));
@@ -1059,7 +1060,7 @@ function showCity(name, fly) {
   const c = CITIES.find(x => x.name === name);
   if (!c) return;
   const r = REGIONS[c.region];
-  if (fly) map.flyTo([c.lat, c.lng], Math.max(map.getZoom(), 6.5), { duration: 1.1 });
+  if (fly) { map.invalidateSize(); map.flyTo([c.lat, c.lng], Math.max(map.getZoom(), 6.5), { duration: 1.1 }); }
   pulse(c.lat, c.lng, c.name);
   openPanel(`
     <div class="kicker" style="color:${r.color}">City · ${r.name}</div>
@@ -1071,6 +1072,7 @@ function showCity(name, fly) {
 
 function resetView() {
   activeRegion = null; applyStyles(); markLegend(null); closePanel(); clearPulse(); clearCaption();
+  map.invalidateSize();
   map.flyTo([36.5, 104.5], 4.25, { duration: 1.0 });
 }
 map.on("click", () => {}); // keep map clicks from doing anything destructive
@@ -1092,7 +1094,7 @@ function caption(text) { document.getElementById("caption-text").innerHTML = tex
 function clearCaption() { captionEl.classList.remove("visible"); }
 
 window.claudeAPI = {
-  flyTo: (lat, lng, zoom) => map.flyTo([lat, lng], zoom || 6, { duration: 1.3 }),
+  flyTo: (lat, lng, zoom) => { map.invalidateSize(); map.flyTo([lat, lng], zoom || 6, { duration: 1.3 }); },
   focusRegion,
   focusProvince: q => {
     const entry = Object.entries(PROV).find(([a, m]) => m.en.toLowerCase() === String(q).toLowerCase() || String(a) === String(q));
