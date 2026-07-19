@@ -23,6 +23,8 @@ TARGETS = {
     "yalu": ({"Yalu"}, None),
     "tumen": ({"Tumen"}, None),
     "pearl": ({"Xi", "Xun", "Hongshui", "Nanpan"}, (102.0, 114.5, 21.5, 26.5)),
+    "gan": ({"Gan"}, (113.5, 116.8, 24.5, 29.8)),
+    "bei": ({"Bei"}, (112.3, 114.6, 22.6, 25.5)),
     "mekong": ({"Mekong"}, (90.0, 108.0, 20.5, 39.0)),   # Lancang: keep the in-China stretch and a bit beyond
     "yarlung": ({"Brahmaputra", "Dihang"}, (79.0, 98.0, 27.5, 32.0)),
     "nu": ({"Nu", "Salween"}, (91.0, 100.5, 23.0, 33.0)),

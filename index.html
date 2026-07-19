@@ -137,6 +137,8 @@
   <span class="chip" id="tg-food">Cuisines</span>
   <span class="chip" id="tg-tea">Gongfu tea</span>
   <span class="chip" id="tg-profile">3 Gorges levels</span>
+  <span class="chip" id="tg-rail">Rail trunks</span>
+  <span class="chip" id="tg-porc">Porcelain routes</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -794,6 +796,51 @@ const RESERVOIR_BOUNDS = [[[31.05293, 106.17188], [31.80289, 111.44531]], [[30.2
 const reservoirLayer = L.layerGroup(RESERVOIR_BOUNDS.map((b, i) =>
   L.imageOverlay(`reservoir-strip-${i}.png`, b, { interactive: false })));
 
+// Rail trunks: the HSR grid's main corridors (schematic, routed through actual station cities) + the Qinghai–Tibet line
+function railLine(pts, tip, dash) {
+  const sm = smoothOpen(pts, 6);
+  const casing = L.polyline(sm, { color: "#ffffff", weight: 4.5, opacity: 0.85 });
+  const line = L.polyline(sm, { color: "#3a3a3a", weight: 2.2, opacity: 0.9, dashArray: dash || null });
+  line.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return [casing, line];
+}
+const railLayer = L.layerGroup([
+  ...railLine([[39.9,116.4],[39.1,117.2],[36.67,117.0],[34.26,117.2],[32.9,117.35],[32.06,118.8],[31.8,119.97],[31.57,120.3],[31.3,120.6],[31.23,121.47]],
+    "Beijing–Shanghai HSR (京沪) — the world's busiest rail line by revenue; 1,318 km in ~4.5 hours"),
+  ...railLine([[39.9,116.4],[38.04,114.5],[34.75,113.62],[30.59,114.3],[28.23,112.94],[23.13,113.26],[22.54,114.06],[22.32,114.17]],
+    "Beijing–Guangzhou–Hong Kong HSR (京广深港) — the north–south spine: 2,440 km, the old imperial road's successor"),
+  ...railLine([[39.9,116.4],[40.0,119.74],[41.1,121.13],[41.8,123.43],[43.88,125.32],[45.8,126.53]],
+    "Beijing–Harbin HSR (京哈) — through Shanhaiguan into the Northeast"),
+  ...railLine([[31.23,121.47],[30.27,120.15],[28.68,115.89],[28.23,112.94],[26.65,106.63],[25.04,102.71]],
+    "Shanghai–Kunming HSR (沪昆) — east–west across the whole south: Delta → Nanchang → Changsha → Guizhou's bridges → Yunnan"),
+  ...railLine([[31.23,121.47],[32.06,118.8],[31.82,117.23],[30.59,114.3],[30.7,111.28],[29.56,106.55],[30.66,104.06]],
+    "Yangtze corridor HSR (沪汉蓉) — Shanghai to Chengdu along the river's axis"),
+  ...railLine([[34.6,119.2],[34.26,117.2],[34.75,113.62],[34.34,108.94],[34.36,107.2],[36.06,103.83],[36.62,101.77],[38.93,100.45],[39.77,98.29],[42.83,93.51],[43.83,87.62]],
+    "The Land Bridge (陆桥) — Lianyungang to Ürümqi via Zhengzhou, Xi'an, and the Hexi Corridor; the Silk Road as rail, continuing to Europe as the China–Europe freight route"),
+  ...railLine([[30.27,120.15],[29.87,121.54],[28.0,120.65],[26.07,119.3],[24.48,118.09],[23.36,116.68],[22.54,114.06]],
+    "Coastal HSR (杭深) — Hangzhou to Shenzhen along the diaspora coast"),
+  ...railLine([[30.66,104.06],[32.44,105.84],[33.07,107.03],[34.34,108.94]],
+    "Xi'an–Chengdu HSR (西成) — punches through the Qinling in 4 hours; the plank-road corridor, now 250 km/h"),
+  ...railLine([[36.62,101.77],[36.9,100.0],[37.37,97.37],[36.4,94.9],[35.62,94.06],[34.22,92.44],[32.9,91.9],[31.48,92.05],[30.48,91.1],[29.65,91.14]],
+    "Qinghai–Tibet railway (青藏) — conventional rail, the world's highest: 5,072 m at Tanggula Pass, oxygen-fed carriages", "6 5"),
+  geoLabel(43.4, 89.0, "Land Bridge → Europe", "#3a3a3a"),
+  geoLabel(33.6, 92.6, "Qinghai–Tibet line", "#3a3a3a")
+]);
+
+// Porcelain routes: how Jingdezhen's product reached the court and the world (real Gan/Bei river geometry)
+const porcelainLayer = L.layerGroup([
+  ...geoRiverMulti(RIVERS.gan, "Gan River 赣江 — Jiangxi's spine and the export highway south", { weight: 2 }),
+  ...geoRiverMulti(RIVERS.bei, "Bei River 北江 — from Meiling Pass down to Guangzhou", { weight: 2 }),
+  ...arrowPath([[29.27,117.18],[29.1,116.95],[29.0,116.67],[29.45,116.35],[29.73,116.22],[30.05,116.35]], "#0e8f7e",
+    "Tribute route: down the Chang River, across Poyang Lake, out at Hukou into the Yangtze — then downstream and up the Grand Canal to the court (toggle Yangtze & Canal for the rest)"),
+  ...arrowPath([[28.95,116.5],[28.68,115.89],[27.5,115.2],[26.5,115.05],[25.85,114.93],[25.6,114.6],[25.32,114.42],[25.0,114.2],[24.81,113.6],[24.2,113.3],[23.7,113.03],[23.13,113.26],[22.6,113.7],[21.8,114.3],[20.8,114.9]], "#b8860b",
+    "Export route: up the Gan, porters over Meiling Pass — the single portage between the Yangtze and Pearl watersheds — down the Bei to Canton, then the ocean: Southeast Asia, India, Ottoman courts, Europe"),
+  geoDot(25.32, 114.42, "Meiling Pass 梅关 — the porters' saddle between the two great river systems; for centuries, most of the world's porcelain crossed this one hill on shoulder poles", "#b8860b"),
+  geoLabel(25.6, 114.75, "Meiling Pass", "#b8860b"),
+  geoLabel(30.0, 117.4, "tribute → Beijing", "#0e8f7e"),
+  geoLabel(21.3, 115.2, "export → the world", "#b8860b")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -825,6 +872,8 @@ const overlays = {
   food: { layer: cuisinesLayer, chip: "tg-food" },
   tea: { layer: teaLayer, chip: "tg-tea" },
   profile: { el: "profile", chip: "tg-profile" },
+  rail: { layer: railLayer, chip: "tg-rail" },
+  porcelain: { layer: porcelainLayer, chip: "tg-porc" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
