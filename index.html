@@ -164,6 +164,7 @@
   <span class="chip" id="tg-xpcc">XPCC cities</span>
   <span class="chip" id="tg-ctib">Cultural Tibet</span>
   <span class="chip" id="tg-medog">Medog dam</span>
+  <span class="chip" id="tg-vajra">Vajrayana world</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -234,6 +235,7 @@
 <script src="china-geo.js"></script>
 <script src="china-rivers.js"></script>
 <script src="china-waterways.js"></script>
+<script src="china-buddhist.js"></script>
 <script>
 // ---------- Content ----------
 const REGIONS = {
@@ -1142,6 +1144,38 @@ const medogLayer = L.layerGroup([
   geoLabel(21.9, 90.9, "Bay of Bengal", "#c2452d")
 ]);
 
+// Vajrayana world: the Tibetan-Buddhist cultural sphere, from Ladakh to Kalmykia to Buryatia (Bhutan border + centers from OSM)
+function sphereDot(lat, lng, tip) {
+  const m = L.circleMarker([lat, lng], { radius: 5, color: "#fff", weight: 1.5, fillColor: "#d97706", fillOpacity: 0.95 });
+  m.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return m;
+}
+const bhutanPoly = L.polygon(BUDDHIST.bhutan, { color: "#b45309", weight: 2, fillColor: "#d97706", fillOpacity: 0.25 });
+bhutanPoly.bindTooltip("Bhutan (Druk Yul, 'Land of the Thunder Dragon') — a sovereign kingdom, never part of China; founded 1616 by a Tibetan lama; Drukpa Kagyu Buddhism, Tibetan-family language and script", { sticky: true, className: "prov-tip" });
+const C = BUDDHIST.centers;
+const vajrayanaLayer = L.layerGroup([
+  bhutanPoly,
+  geoLabel(27.0, 90.6, "Bhutan", "#b45309"),
+  sphereDot(29.6542, 91.1173, "Lhasa — the heart of the Tibetan Buddhist world"),
+  geoLabel(29.9, 91.4, "Lhasa (heart)", "#b45309"),
+  sphereDot(C.leh[0], C.leh[1], "Ladakh (Leh), India — 'Little Tibet'; Gelug/Drukpa monasteries in the Indian Himalaya"),
+  geoLabel(34.4, 77.7, "Ladakh", "#b45309"),
+  sphereDot(C.gangtok[0], C.gangtok[1], "Sikkim (Gangtok), India — a former Buddhist kingdom, annexed by India in 1975"),
+  sphereDot(C.dharamshala[0], C.dharamshala[1], "Dharamshala, India — seat of the Dalai Lama and the Tibetan government-in-exile since 1959"),
+  geoLabel(32.5, 75.4, "Dharamshala (exile)", "#b45309"),
+  sphereDot(C.kathmandu[0], C.kathmandu[1], "Nepal — Tibetan Buddhism in the highlands (Mustang, Dolpo, Sherpa country) and the Kathmandu valley's great stupas"),
+  geoLabel(27.9, 84.2, "Nepal highlands", "#b45309"),
+  sphereDot(C.labrang[0], C.labrang[1], "Labrang (Xiahe), Amdo — one of the six great Gelug monasteries, in Gansu"),
+  sphereDot(C.ulaanbaatar[0], C.ulaanbaatar[1], "Mongolia — Gelug Buddhist since the 16th c.; the title 'Dalai Lama' is itself Mongolian ('dalai' = ocean, given by Altan Khan in 1578)"),
+  geoLabel(48.3, 106.9, "Mongolia", "#b45309"),
+  sphereDot(C.ulanude[0], C.ulanude[1], "Buryatia (Ulan-Ude), Russia — Tibetan Buddhism reached Siberia; the Ivolginsky Datsan is its center"),
+  geoLabel(52.3, 107.6, "Buryatia (Russia)", "#b45309"),
+  sphereDot(C.kyzyl[0], C.kyzyl[1], "Tuva (Kyzyl), Russia — a Tibetan-Buddhist republic in southern Siberia"),
+  geoLabel(52.2, 94.4, "Tuva", "#b45309"),
+  sphereDot(C.elista[0], C.elista[1], "Kalmykia (Elista), Russia — on the Caspian steppe: the ONLY Buddhist-majority region in Europe (Mongol Oirats who migrated west in the 1600s)"),
+  geoLabel(46.7, 43.6, "Kalmykia — Buddhist Europe", "#b45309")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -1184,6 +1218,7 @@ const overlays = {
   xpcc: { layer: xpccLayer, chip: "tg-xpcc" },
   culturaltibet: { layer: culturalTibetLayer, chip: "tg-ctib" },
   medog: { layer: medogLayer, chip: "tg-medog" },
+  vajrayana: { layer: vajrayanaLayer, chip: "tg-vajra" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
