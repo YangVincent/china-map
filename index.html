@@ -140,6 +140,7 @@
   <span class="chip" id="tg-rail">Rail trunks</span>
   <span class="chip" id="tg-porc">Porcelain routes</span>
   <span class="chip" id="tg-snow">Snow</span>
+  <span class="chip" id="tg-3riv">3 parallel rivers</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -887,7 +888,19 @@ const snowLayer = L.layerGroup([
   geoDot(48.5692, 87.4304, "Hemu 禾木 — Tuvan village backcountry; fur-skinned traditional skis still made here", "#2e6f9e"),
   geoDot(30.9217, 121.9021, "Yaoxue (L*SNOW) Lingang — the world's largest indoor snow park, next door to Yangshan port", "#2e6f9e"),
   geoDot(23.11, 114.42, "Huizhou 惠州 — GP87's factory city (city-level pin): the premier Chinese snowboard OEM, Flow-founder lineage, Shenzhen ops; part of the PRD composites belt that builds much of the world's boards (the other giant OEM, SWS, is in Dubai)", "#4E2A84"),
-  geoLabel(22.85, 114.6, "GP87 (OEM, Huizhou)", "#4E2A84")
+  geoLabel(23.2, 114.52, "GP87 (OEM, Huizhou)", "#4E2A84")
+]);
+
+// Three Parallel Rivers: in NW Yunnan the Yangtze (Jinsha), Mekong (Lancang), and Salween (Nu) run side by side
+// within ~70km before scattering to Shanghai, Vietnam, and Myanmar. All real Natural Earth geometry.
+const parallelRiversLayer = L.layerGroup([
+  ...geoRiverMulti(RIVERS.yangtze, "Yangtze/Jinsha 金沙江 — hooks east at the Great Bend near Lijiang and crosses all of China to Shanghai", { color: "#1d6fc0", weight: 3 }),
+  ...geoRiverMulti(RIVERS.mekong, "Mekong/Lancang 澜沧江 — exits Yunnan into Laos; the river of Indochina, ending in Vietnam's delta", { color: "#0e8f7e", weight: 3 }),
+  ...geoRiverMulti(RIVERS.nu, "Salween/Nu 怒江 ('Angry River') — still largely undammed; exits into Myanmar", { color: "#8a2e18", weight: 3 }),
+  geoLabel(28.3, 99.4, "Three Parallel Rivers", "#4E2A84"),
+  geoLabel(27.2, 101.2, "Jinsha → Shanghai", "#1d6fc0"),
+  geoLabel(23.4, 100.6, "Lancang → Vietnam", "#0e8f7e"),
+  geoLabel(24.6, 98.2, "Nu → Myanmar", "#8a2e18")
 ]);
 
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
@@ -924,6 +937,7 @@ const overlays = {
   rail: { layer: railLayer, chip: "tg-rail" },
   porcelain: { layer: porcelainLayer, chip: "tg-porc" },
   snow: { layer: snowLayer, chip: "tg-snow" },
+  parallelrivers: { layer: parallelRiversLayer, chip: "tg-3riv" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
