@@ -160,6 +160,7 @@
   <span class="chip" id="tg-silk">Silk Road</span>
   <span class="chip" id="tg-wall">Great Wall</span>
   <span class="chip" id="tg-krkm">Karakoram Hwy</span>
+  <span class="chip" id="tg-ili">Ili trip</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -992,6 +993,42 @@ const karakoramLayer = L.layerGroup([
   geoLabel(33.3, 72.6, "Islamabad", "#c2452d")
 ]);
 
+// Ili trip: Arnaud Bertrand's NW-Xinjiang route, plotted from the user's stop list.
+// Stop coords sourced from OSM/Nominatim (scripts/fetch_ili_trip.py); connectors are straight-line-between-stops (schematic), not road traces.
+function tripMarker(lat, lng, num, tip) {
+  const m = L.marker([lat, lng], { interactive: true, zIndexOffset: 1500, icon: L.divIcon({ className: "", iconSize: [24, 24], iconAnchor: [12, 12],
+    html: `<div style="min-width:20px;height:20px;padding:0 4px;border-radius:11px;background:#b02a6e;border:2px solid #fff;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.4)">${num}</div>` }) });
+  m.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return m;
+}
+const ILI_PATH = [
+  [44.1054,85.1001],  // 1-2 Anjihai "Baili Danxia"
+  [44.6083,81.1806],  // 5 Sayram Lake
+  [44.2119,80.403],   // 7 Khorgos
+  [43.9052,81.2748],  // 8 Yining
+  [43.1527,81.1271],  // 9 Zhaosu steppe
+  [42.9831,81.1046],  // 11 Zhaosu wetland
+  [42.6682,80.5863],  // 12 Xiata
+  [42.55,81.0],       // 13 jade lake / Aheyazi canyon (approximate)
+  [43.2169,81.833]    // current: Tekes
+];
+const iliTripLayer = L.layerGroup([
+  L.polyline(smoothOpen(ILI_PATH, 5), { color: "#b02a6e", weight: 2.5, opacity: 0.8, dashArray: "6 4" }),
+  tripMarker(44.1054, 85.1001, "1-2", "1–2: Anjihai Grand Canyon 安集海大峡谷 — the 'Baili Danxia' hundred-li red cliffs, ~3h west of Ürümqi"),
+  tripMarker(44.9737, 80.8916, "~", "Wenquan 温泉县 (Bortala) — listed unnumbered; geographically a northern side-trip, sequence uncertain"),
+  tripMarker(44.6083, 81.1806, "5", "5: Sayram Lake 赛里木湖 — alpine lake at ~2,070m, 'the last teardrop of the Atlantic' (last moisture that reaches this far inland)"),
+  tripMarker(44.2119, 80.403, "7", "7: Khorgos 霍尔果斯 — the China–Kazakhstan border: a free-trade zone and the dry port where the China–Europe rail crosses"),
+  tripMarker(43.9052, 81.2748, "8", "8: Yining 伊宁 (Ghulja) — capital of the Ili valley"),
+  tripMarker(43.9925, 80.9059, "8", "8: Huiyuan 惠远 — the Qing garrison town that governed all Xinjiang; the General of Ili's seat"),
+  tripMarker(43.1527, 81.1271, "9", "9: Zhaosu 昭苏 steppe — high grassland famed for the Ili 'heavenly horses'"),
+  tripMarker(42.9831, 81.1046, "11", "11: Zhaosu wetland park 昭苏湿地公园"),
+  tripMarker(42.6682, 80.5863, "12", "12: Xiata 夏塔 — valley and ancient pass over the Tianshan toward Aksu; a historic Silk Road shortcut"),
+  tripMarker(42.55, 81.0, "13", "13: jade lake in the Aheyazi canyon 阿合牙孜 (approximate location — couldn't source precisely)"),
+  tripMarker(43.2169, 81.833, "★", "Now: Tekes 特克斯 — the 'Bagua City', its street plan laid out as the eight trigrams of the I Ching, concentric rings with no traffic lights"),
+  geoLabel(44.9, 84.5, "Ürümqi →", "#b02a6e"),
+  geoLabel(43.0, 82.5, "Tekes (now)", "#b02a6e")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -1030,6 +1067,7 @@ const overlays = {
   silkroad: { layer: silkRoadLayer, chip: "tg-silk" },
   greatwall: { layer: greatWallLayer, chip: "tg-wall" },
   karakoram: { layer: karakoramLayer, chip: "tg-krkm" },
+  ili: { layer: iliTripLayer, chip: "tg-ili" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
