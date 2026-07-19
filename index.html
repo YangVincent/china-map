@@ -837,9 +837,9 @@ const railLayer = L.layerGroup([
 const porcelainLayer = L.layerGroup([
   ...geoRiverMulti(RIVERS.gan, "Gan River 赣江 — Jiangxi's spine and the export highway south", { weight: 2 }),
   ...geoRiverMulti(RIVERS.bei, "Bei River 北江 — from Meiling Pass down to Guangzhou", { weight: 2 }),
-  ...arrowPath([[29.27,117.18],[29.20,117.05],[29.05,116.85],[28.98,116.70],[29.12,116.60],[29.35,116.48],[29.55,116.35],[29.73,116.22],[30.02,116.30]], "#0e8f7e",
-    "Tribute route: from Jingdezhen's wharf down the Chang River, across Poyang Lake, out at Hukou into the Yangtze — then downstream and up the Grand Canal to the court (toggle Yangtze & Canal for the rest)"),
-  ...arrowPath([[29.27,117.18],[29.20,117.05],[29.05,116.85],[28.95,116.60],[28.83,116.30],[28.68,115.89]]
+  ...arrowPath([[29.27,117.18],[29.22,117.12],[29.10,116.95],[28.99,116.78],[28.98,116.67],[29.02,116.55],[29.10,116.45],[29.25,116.36],[29.45,116.30],[29.60,116.25],[29.73,116.22],[30.02,116.30]], "#0e8f7e",
+    "Tribute route: from Jingdezhen's wharf down the Chang River, past Poyang town where it becomes the Rao, through the lake's east bay, out at Hukou into the Yangtze — then the Grand Canal north (toggle Yangtze & Canal for the rest)"),
+  ...arrowPath([[29.27,117.18],[29.22,117.12],[29.10,116.95],[28.99,116.78],[28.98,116.67],[28.90,116.55],[28.80,116.42],[28.72,116.20],[28.68,115.89]]
       .concat(riverSlice("gan", 28.55, 25.9))
       .concat([[25.85,114.93],[25.60,114.60],[25.39,114.36],[25.26,114.40],[25.12,114.31],[24.95,114.05],[24.81,113.60]])
       .concat(riverSlice("bei", 24.7, 23.55))
