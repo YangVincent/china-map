@@ -83,6 +83,12 @@
   #caption.visible { display: block; }
   #caption .who { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
 
+  #profile {
+    bottom: 90px; left: 50%; transform: translateX(-50%);
+    width: 620px; max-width: calc(100% - 28px); padding: 12px 16px; display: none;
+  }
+  #profile.visible { display: block; }
+
   .city-label { background: none; border: none; box-shadow: none; }
   .city-label span {
     font-size: 11px; font-weight: 600; color: #333; text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff;
@@ -130,6 +136,8 @@
   <span class="chip" id="tg-treaty">Treaty century</span>
   <span class="chip" id="tg-food">Cuisines</span>
   <span class="chip" id="tg-tea">Gongfu tea</span>
+  <span class="chip" id="tg-profile">3 Gorges levels</span>
+  <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
 
@@ -148,8 +156,56 @@
   <div id="caption-text"></div>
 </div>
 
+<div class="hud" id="profile">
+  <div style="font-size:13px;font-weight:650;margin-bottom:6px">Three Gorges: what the water levels mean</div>
+  <svg width="100%" viewBox="0 0 560 250" style="display:block">
+    <line x1="40" y1="222" x2="530" y2="222" stroke="var(--panel-border)" stroke-width="1"/>
+    <line x1="40" y1="30" x2="40" y2="222" stroke="var(--panel-border)" stroke-width="1"/>
+    <g font-size="10" fill="var(--text-2)" text-anchor="end">
+      <text x="36" y="225">0 m</text>
+      <text x="36" y="177">50</text>
+      <text x="36" y="129">100</text>
+      <text x="36" y="86">145</text>
+      <text x="36" y="57">175</text>
+    </g>
+    <polygon points="40,54 530,54 530,159 485,150 426,136 366,121 285,102 218,92 129,80 40,68" fill="#1d6fc0" opacity="0.22"/>
+    <path d="M40,68 L129,80 L218,92 L285,102 L366,121 L426,136 L485,150 L530,159" fill="none" stroke="#1d6fc0" stroke-width="1.6"/>
+    <path d="M40,97 L129,112 L218,126 L285,140 L366,169 L426,184 L485,198 L530,208" fill="none" stroke="#6b4a2a" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <line x1="40" y1="54" x2="530" y2="54" stroke="#1d6fc0" stroke-width="1.6"/>
+    <line x1="148" y1="83" x2="530" y2="83" stroke="#2e6f9e" stroke-width="1.3" stroke-dasharray="6 4"/>
+    <rect x="530" y="44" width="12" height="164" fill="#555"/>
+    <line x1="516" y1="54" x2="516" y2="159" stroke="var(--text-2)" stroke-width="1"/>
+    <polygon points="516,54 513,60 519,60" fill="var(--text-2)"/>
+    <polygon points="516,159 513,153 519,153" fill="var(--text-2)"/>
+    <g font-size="10.5" fill="var(--text)">
+      <text x="46" y="49">normal pool 175 m (winter)</text>
+      <text x="156" y="97">flood-prep level 145 m (summer)</text>
+      <text x="150" y="72" fill="#1d6fc0">pre-dam river surface</text>
+      <text x="150" y="140" fill="#6b4a2a">riverbed</text>
+      <text x="452" y="112" text-anchor="end">+~110 m</text>
+      <text x="452" y="124" text-anchor="end" fill="var(--text-2)">at the dam</text>
+    </g>
+    <g font-size="10" fill="var(--text-2)">
+      <line x1="370" y1="54" x2="370" y2="46" stroke="#6b4a2a" stroke-width="1.5"/>
+      <line x1="392" y1="54" x2="392" y2="46" stroke="#6b4a2a" stroke-width="1.5"/>
+      <line x1="465" y1="54" x2="465" y2="46" stroke="#6b4a2a" stroke-width="1.5"/>
+      <text x="370" y="40" text-anchor="middle">Qutang</text>
+      <text x="399" y="27" text-anchor="middle">Wu</text>
+      <text x="465" y="40" text-anchor="middle">Xiling</text>
+      <text x="556" y="40" text-anchor="end">crest 185 m</text>
+    </g>
+    <g font-size="10" fill="var(--text-2)">
+      <text x="40" y="238">Chongqing · km 0</text>
+      <text x="366" y="238" text-anchor="middle">Fengjie</text>
+      <text x="542" y="238" text-anchor="end">dam · km ~660</text>
+    </g>
+  </svg>
+  <div style="font-size:11px;color:var(--text-2);margin-top:4px">Schematic longitudinal profile, vertical exaggeration ~1,600×. Shaded area = water added above the natural river. The pool is deliberately run in reverse of the natural cycle: drawn down to 145 m before summer to catch floods, refilled to 175 m in autumn. For the map-view footprint, toggle <strong>Reservoir extent</strong>: blue = the 145 m pool, orange = the extra land drowned at 175 m (computed from pre-dam SRTM elevation data).</div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="china-geo.js"></script>
+<script src="china-rivers.js"></script>
 <script>
 // ---------- Content ----------
 const REGIONS = {
@@ -394,7 +450,7 @@ CITIES.forEach(c => {
 const huLine = L.polyline([[50.25, 127.49], [25.03, 98.49]], { color: "#d0451b", weight: 2.5, dashArray: "8 6" });
 huLine.bindTooltip("Hu Line — 94% of Chinese live east of it", { permanent: true, direction: "right", className: "line-label", offset: [8, 0] });
 const nsLine = L.polyline(
-  [[34.2, 103.8], [33.6, 106.5], [33.9, 109.0], [33.2, 111.5], [32.6, 113.0], [32.9, 115.5], [33.3, 117.5], [33.7, 119.4], [34.0, 120.3]],
+  smoothOpen([[34.2, 103.8], [33.6, 106.5], [33.9, 109.0], [33.2, 111.5], [32.6, 113.0], [32.9, 115.5], [33.3, 117.5], [33.7, 119.4], [34.0, 120.3]]),
   { color: "#2e6f9e", weight: 2.5, dashArray: "8 6" });
 nsLine.bindTooltip("Qinling–Huai line — the north/south divide", { permanent: true, direction: "bottom", className: "line-label" });
 
@@ -460,16 +516,61 @@ function geoRiver(pts, tip, opts) {
   line.bindTooltip(tip, { sticky: true, className: "prov-tip" });
   return [casing, line];
 }
+// Catmull-Rom spline through waypoints — used for every stylized route so nothing renders as chopped segments
+function crInterp(p0, p1, p2, p3, t) {
+  const t2 = t * t, t3 = t2 * t;
+  return [
+    0.5 * ((2 * p1[0]) + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
+    0.5 * ((2 * p1[1]) + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)
+  ];
+}
+function smoothOpen(pts, subdiv = 8) {
+  if (pts.length < 3) return pts;
+  const out = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    for (let j = 0; j < subdiv; j++) out.push(crInterp(p0, p1, p2, p3, j / subdiv));
+  }
+  out.push(pts[pts.length - 1]);
+  return out;
+}
+function smoothClosed(pts, subdiv = 8) {
+  const n = pts.length, out = [];
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    for (let j = 0; j < subdiv; j++) out.push(crInterp(p0, p1, p2, p3, j / subdiv));
+  }
+  return out;
+}
+// Real river geometry (Natural Earth 10m, extracted by scripts/build_rivers_js.py into china-rivers.js)
+function geoRiverMulti(segs, tip, opts) {
+  const casing = L.polyline(segs, { color: "#ffffff", weight: (opts?.weight || 4) + 3, opacity: 0.9 });
+  const line = L.polyline(segs, { color: opts?.color || "#1d6fc0", weight: opts?.weight || 4, opacity: 0.95, dashArray: opts?.dashArray || null });
+  line.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return [casing, line];
+}
+function riverMainSeg(key) {
+  return RIVERS[key].reduce((a, b) => (b.length > a.length ? b : a), RIVERS[key][0]);
+}
+// Flow arrow snapped to the nearest real river vertex, oriented by the local downstream direction
+function flowArrowNear(key, lat, lng, color) {
+  let bestD = Infinity, bestSeg = null, bestI = 0;
+  RIVERS[key].forEach(seg => seg.forEach((p, i) => {
+    const d = (p[0] - lat) ** 2 + (p[1] - lng) ** 2;
+    if (d < bestD) { bestD = d; bestSeg = seg; bestI = i; }
+  }));
+  const j = Math.min(bestSeg.length - 1, bestI + 3);
+  if (j === bestI) return null;
+  return flowArrowHead([bestSeg[bestI], bestSeg[j]], color || "#1d6fc0");
+}
 
-const YELLOW_PTS = [[34.9,96.1],[35.5,99.5],[36.06,103.83],[37.5,105.2],[38.5,106.2],[40.3,107.0],[40.6,110.0],[40.2,111.2],[39.0,111.1],[36.5,110.4],[35.0,110.3],[34.7,111.2],[34.9,113.6],[35.0,114.5],[35.8,115.8],[36.7,117.0],[37.3,118.2],[37.8,119.0]];
-const WEI_PTS = [[34.6,104.2],[34.58,105.7],[34.36,107.2],[34.3,108.9],[34.5,110.0],[34.6,110.3]];
 const taihangBand = L.polygon(
-  [[35.3,112.5],[36.0,113.1],[37.0,113.5],[38.0,113.8],[39.0,113.9],[40.0,113.6],[40.0,114.3],[39.0,114.6],[38.0,114.5],[37.0,114.2],[36.0,113.8],[35.3,113.2]],
+  smoothClosed([[35.3,112.5],[36.0,113.1],[37.0,113.5],[38.0,113.8],[39.0,113.9],[40.0,113.6],[40.0,114.3],[39.0,114.6],[38.0,114.5],[37.0,114.2],[36.0,113.8],[35.3,113.2]]),
   { color: "#6b4a2a", weight: 1.5, fillColor: "#6b4a2a", fillOpacity: 0.35 });
 taihangBand.bindTooltip("Taihang Mountains 太行山 — the 'Shan' in Shanxi/Shandong", { sticky: true, className: "prov-tip" });
 const yellowLayer = L.layerGroup([
-  ...geoRiver(YELLOW_PTS, "Yellow River 黄河 — current course (since 1855)"),
-  ...geoRiver(WEI_PTS, "Wei River 渭河 — the Yellow's great tributary; Xi'an sits on it", { weight: 2.5 }),
+  ...geoRiverMulti(RIVERS.yellow, "Yellow River 黄河 — current course (since 1855); real geometry, Natural Earth 10m"),
+  ...geoRiverMulti(RIVERS.wei, "Wei River 渭河 — the Yellow's great tributary; Xi'an sits on it", { weight: 2.5 }),
   taihangBand,
   geoLabel(41.1, 107.5, "Yellow River 黄河", "#1d6fc0"),
   geoLabel(34.95, 105.1, "Wei River 渭河", "#1d6fc0"),
@@ -477,23 +578,22 @@ const yellowLayer = L.layerGroup([
 ]);
 
 const oldYellowLayer = L.layerGroup([
-  ...geoRiver([[34.9,113.6],[35.6,114.2],[36.6,114.9],[37.6,115.7],[38.5,116.5],[39.0,117.4],[39.1,117.9]],
-    "Ancient northern course (pre-602 BC, and much of Han–Song) — emptied near today's Tianjin", { color: "#0e8f7e", weight: 3, dashArray: "8 6" }),
-  ...geoRiver([[34.8,114.35],[34.4,115.6],[34.26,117.2],[34.0,118.3],[33.8,119.2],[34.0,120.3]],
-    "Southern course 1128–1855 AD — hijacked the Huai River, emptied south of Shandong", { color: "#c2452d", weight: 3, dashArray: "8 6" }),
+  ...geoRiver(smoothOpen([[34.9,113.6],[35.6,114.2],[36.6,114.9],[37.6,115.7],[38.5,116.5],[39.0,117.4],[39.1,117.9]]),
+    "Ancient northern course (pre-602 BC, and much of Han–Song) — emptied near today's Tianjin. Historical reconstruction, schematic", { color: "#0e8f7e", weight: 3, dashArray: "8 6" }),
+  ...geoRiver(smoothOpen([[34.8,114.35],[34.4,115.6],[34.26,117.2],[34.0,118.3],[33.8,119.2],[34.0,120.3]]),
+    "Southern course 1128–1855 AD — hijacked the Huai River, emptied south of Shandong. Historical reconstruction, schematic", { color: "#c2452d", weight: 3, dashArray: "8 6" }),
   geoDot(34.79, 114.35, "Kaifeng — the 'hanging river': the riverbed is ~10m ABOVE the city behind dikes"),
   geoLabel(37.9, 117.0, "ancient course → Tianjin", "#0e8f7e"),
   geoLabel(33.4, 117.4, "1128–1855 course → hijacked the Huai", "#c2452d")
 ]);
 
 const qinlingBand = L.polygon(
-  [[34.3,104.5],[34.5,106.5],[34.3,108.5],[34.0,110.5],[33.7,112.0],[33.2,112.0],[33.5,110.3],[33.7,108.3],[33.8,106.3],[33.7,104.5]],
+  smoothClosed([[34.3,104.5],[34.5,106.5],[34.3,108.5],[34.0,110.5],[33.7,112.0],[33.2,112.0],[33.5,110.3],[33.7,108.3],[33.8,106.3],[33.7,104.5]]),
   { color: "#6b4a2a", weight: 1.5, fillColor: "#6b4a2a", fillOpacity: 0.35 });
 qinlingBand.bindTooltip("Qinling Mountains 秦岭 — THE north/south divide and watershed", { sticky: true, className: "prov-tip" });
 const hanLayer = L.layerGroup([
   qinlingBand,
-  ...geoRiver([[33.15,106.7],[33.07,107.03],[32.85,108.1],[32.7,109.0],[32.55,110.2],[32.5,111.5],[32.0,112.15],[31.5,112.6],[30.9,113.5],[30.58,114.27]],
-    "Han River 汉江 — namesake of the Han dynasty; joins the Yangtze at Wuhan", { weight: 3 }),
+  ...geoRiverMulti(RIVERS.han, "Han River 汉江 — namesake of the Han dynasty; joins the Yangtze at Wuhan. Real geometry, Natural Earth 10m", { weight: 3 }),
   geoDot(33.07, 107.03, "Hanzhong 汉中 — basin between Qinling and Daba; named the Han dynasty and the Han people"),
   geoLabel(34.55, 107.6, "Qinling Mts 秦岭", "#6b4a2a"),
   geoLabel(31.9, 112.9, "Han River 汉江", "#1d6fc0"),
@@ -502,7 +602,7 @@ const hanLayer = L.layerGroup([
 
 // Story pins: places emphasized during the tour — industry (purple), history/geopolitics (rust), culture/econ models (teal)
 const nanlingBand = L.polygon(
-  [[25.6,110.2],[25.9,111.5],[25.5,113.0],[25.3,114.5],[25.0,116.0],[24.4,116.2],[24.7,114.5],[24.8,113.0],[25.2,111.5],[25.0,110.2]],
+  smoothClosed([[25.6,110.2],[25.9,111.5],[25.5,113.0],[25.3,114.5],[25.0,116.0],[24.4,116.2],[24.7,114.5],[24.8,113.0],[25.2,111.5],[25.0,110.2]]),
   { color: "#6b4a2a", weight: 1.5, fillColor: "#6b4a2a", fillOpacity: 0.35 });
 nanlingBand.bindTooltip("Nanling 南岭 — 'the Southern Ranges': the wall that made Lingnan a world apart", { sticky: true, className: "prov-tip" });
 const storyLayer = L.layerGroup([
@@ -516,13 +616,11 @@ const storyLayer = L.layerGroup([
   geoDot(43.12, 131.87, "Vladivostok — Qing 'Haishenwai' until ceded to Russia in 1860; the Northeast's lost coastline", "#8a2e18"),
   geoLabel(43.5, 131.0, "Vladivostok (lost 1860)", "#8a2e18"),
   geoDot(42.91, 129.51, "Yanbian 延边 — Korean autonomous prefecture on the Tumen", "#0e8f7e"),
-  ...geoRiver([[53.34,121.5],[53.0,123.6],[52.35,126.0],[50.25,127.53],[49.4,129.4],[48.4,132.5],[48.27,134.7]],
-    "Amur River — 黑龙江 'Black Dragon River', the Russia border and Heilongjiang's namesake", { color: "#1d6fc0", weight: 3 }),
+  ...geoRiverMulti(RIVERS.amur, "Amur River — 黑龙江 'Black Dragon River', the Russia border (with the Ergun as its upper border stretch) and Heilongjiang's namesake", { color: "#1d6fc0", weight: 3 }),
   geoLabel(52.4, 122.3, "Amur / 黑龙江", "#1d6fc0"),
-  ...geoRiver([[41.99,128.08],[41.5,126.9],[40.9,126.0],[40.46,124.9],[40.12,124.39],[39.9,124.2]],
-    "Yalu River 鸭绿江 — the North Korea border; crossed by Chinese troops in 1950", { color: "#c2452d", weight: 2.5 }),
-  ...geoRiver([[42.02,128.1],[42.4,129.0],[42.86,130.0],[42.42,130.64]],
-    "Tumen River — last 15km are Russia/NK border, blocking China's sea access", { color: "#c2452d", weight: 2.5, dashArray: "6 5" }),
+  ...geoRiverMulti(RIVERS.ussuri, "Ussuri River 乌苏里江 — the eastern Russia border; the 1969 Zhenbao Island clashes here nearly started a Sino-Soviet war", { color: "#1d6fc0", weight: 2.5 }),
+  ...geoRiverMulti(RIVERS.yalu, "Yalu River 鸭绿江 — the North Korea border; crossed by Chinese troops in 1950", { color: "#c2452d", weight: 2.5 }),
+  ...geoRiverMulti(RIVERS.tumen, "Tumen River — last 15km are Russia/NK border, blocking China's sea access", { color: "#c2452d", weight: 2.5, dashArray: "6 5" }),
   geoDot(31.905, 117.19, "Science Island 科学岛 — CAS campus: EAST 'artificial sun' tokamak, quantum labs; downstream of USTC", "#4E2A84"),
   geoLabel(31.98, 116.55, "Science Island", "#4E2A84"),
   geoDot(29.31, 120.08, "Yiwu 义乌 — the world's small-commodities wholesale bazaar; ~2M product types", "#4E2A84"),
@@ -563,32 +661,36 @@ const storyLayer = L.layerGroup([
   geoLabel(26.25, 114.35, "Jinggangshan", "#8a2e18")
 ]);
 
-// Yangtze & Grand Canal: the commercial spine and the imperial grain pipe
+// Yangtze & Grand Canal: real Yangtze geometry (NE 10m) + digitized estuary continuation past Zhenjiang
+const YZ_ESTUARY = smoothOpen([[32.20,119.62],[32.15,119.85],[32.03,120.12],[31.94,120.30],[31.96,120.58],[31.90,120.90],[31.79,121.14],[31.61,121.40],[31.46,121.62],[31.39,121.95]]);
+// Normalize the main segment west→east so downstream slices and arrows are ordered correctly
+const YZ_MAIN = riverMainSeg("yangtze");
+if (YZ_MAIN[0][1] > YZ_MAIN[YZ_MAIN.length - 1][1]) YZ_MAIN.reverse();
+const YZ_RESERVOIR = YZ_MAIN.filter(p => p[0] > 28.7 && p[0] < 32.5 && p[1] >= 106.55 && p[1] <= 111.02);
+const canalPts = smoothOpen([[39.9,116.4],[39.4,116.75],[39.1,117.2],[38.62,116.9],[38.3,116.85],[37.3,116.3],[36.45,115.98],[35.9,116.3],[35.4,116.6],[34.8,117.1],[34.26,117.2],[33.9,118.2],[33.5,119.15],[33.0,119.3],[32.4,119.4],[32.2,119.45],[31.9,119.95],[31.55,120.3],[31.3,120.6],[30.75,120.76],[30.27,120.15]]);
 const yangtzeLayer = L.layerGroup([
-  ...geoRiver([[28.77,104.6],[29.56,106.55],[30.0,108.4],[30.7,111.28],[30.35,112.9],[30.58,114.27],[29.85,115.2],[29.7,116.0],[30.5,117.05],[31.0,118.3],[32.06,118.8],[32.2,119.45],[31.9,120.5],[31.4,121.8]],
-    "Yangtze River 长江 — the commercial spine: navigable by ocean ships to Nanjing, by barges to Chongqing"),
-  ...geoRiver([[39.9,116.4],[39.1,117.2],[38.3,116.85],[36.45,115.98],[35.4,116.6],[34.26,117.2],[33.5,119.15],[32.4,119.4],[32.2,119.45],[31.3,120.6],[30.27,120.15]],
-    "Grand Canal 大运河 — 1,800 km, dug by the 600s AD: the pipe that pumped southern rice to northern capitals", { color: "#0e8f7e", weight: 3, dashArray: "2 6" }),
+  ...geoRiverMulti(RIVERS.yangtze.concat([YZ_ESTUARY]), "Yangtze River 长江 — the commercial spine: navigable by ocean ships to Nanjing, by barges to Chongqing. Real geometry, Natural Earth 10m"),
+  ...geoRiver(canalPts, "Grand Canal 大运河 — 1,800 km, dug by the 600s AD: the pipe that pumped southern rice to northern capitals. Route via its historic canal towns", { color: "#0e8f7e", weight: 3, dashArray: "2 6" }),
   geoLabel(30.1, 109.3, "Yangtze 长江", "#1d6fc0"),
   geoLabel(36.1, 114.6, "Grand Canal 大运河", "#0e8f7e"),
-  tipLine([[29.56,106.55],[29.72,107.40],[30.20,107.95],[30.60,108.25],[30.81,108.41],[30.95,108.95],[31.02,109.52],[31.08,109.88],[31.04,110.34],[30.90,110.70],[30.83,110.98]],
-    { color: "#1d6fc0", weight: 9, opacity: 0.3 },
-    "Three Gorges reservoir — ~660 km of backed-up Yangtze, from the dam all the way to Chongqing; ocean-going barges now dock 2,400 km from the sea"),
+  tipLine(YZ_RESERVOIR, { color: "#1d6fc0", weight: 9, opacity: 0.3 },
+    "Three Gorges reservoir — ~660 km of backed-up Yangtze from the dam to Chongqing, drawn on the river's real course; ocean-going barges now dock 2,400 km from the sea"),
   geoDot(31.02, 109.53, "Qutang Gorge 瞿塘峡 — shortest and most dramatic; the scene on the ¥10 note; Baidicheng at its mouth", "#1d6fc0"),
   geoDot(31.07, 109.90, "Wu Gorge 巫峡 — the deep middle gorge below Goddess Peak", "#1d6fc0"),
   geoDot(30.94, 110.70, "Xiling Gorge 西陵峡 — longest and once deadliest for boatmen; the dam sits at its lower end", "#1d6fc0"),
   geoLabel(31.35, 109.0, "the Three Gorges", "#1d6fc0"),
-  flowArrowHead([[29.56,106.55],[30.0,108.4]], "#1d6fc0"),
-  flowArrowHead([[30.35,112.9],[30.58,114.27]], "#1d6fc0"),
-  flowArrowHead([[31.0,118.3],[32.06,118.8]], "#1d6fc0"),
-  flowArrowHead([[31.9,120.5],[31.4,121.8]], "#1d6fc0")
-]);
+  flowArrowNear("yangtze", 29.8, 107.3),
+  flowArrowNear("yangtze", 30.4, 112.4),
+  flowArrowNear("yangtze", 31.8, 118.5),
+  flowArrowHead([YZ_ESTUARY[YZ_ESTUARY.length - 10], YZ_ESTUARY[YZ_ESTUARY.length - 1]], "#1d6fc0")
+].filter(Boolean));
 
 // Treaty century (1839–1911): opium route, treaty ports & concessions, foreign military penetration
 function arrowPath(pts, color, tip, dash) {
-  const line = L.polyline(pts, { color, weight: 3, opacity: 0.85, dashArray: dash || null });
+  const sm = smoothOpen(pts, 6);
+  const line = L.polyline(sm, { color, weight: 3, opacity: 0.85, dashArray: dash || null });
   line.bindTooltip(tip, { sticky: true, className: "prov-tip" });
-  return [line, flowArrowHead(pts, color)];
+  return [line, flowArrowHead(sm, color)];
 }
 function tipLine(pts, opts, tip) {
   const l = L.polyline(pts, opts);
@@ -596,7 +698,7 @@ function tipLine(pts, opts, tip) {
   return l;
 }
 const treatyLayer = L.layerGroup([
-  tipLine([[16.5,90.0],[12.0,93.5],[8.0,96.5],[5.5,98.5],[3.2,100.6],[1.8,102.9],[1.4,104.3],[3.0,106.5],[7.0,108.8],[11.5,110.5],[16.0,111.8],[19.5,112.8],[21.8,113.7]],
+  tipLine(smoothOpen([[16.5,90.0],[12.0,93.5],[8.0,96.5],[5.5,98.5],[3.2,100.6],[1.8,102.9],[1.4,104.3],[3.0,106.5],[7.0,108.8],[11.5,110.5],[16.0,111.8],[19.5,112.8],[21.8,113.7]]),
     { color: "#3a3a3a", weight: 2.5, dashArray: "8 6", opacity: 0.8 },
     "The opium route: grown in British Bengal, shipped through the Strait of Malacca to the Canton estuary. Tea and silver flowed back."),
   geoLabel(9.5, 95.5, "opium from British India", "#3a3a3a"),
@@ -686,6 +788,12 @@ const teaLayer = L.layerGroup([
   geoLabel(23.3, 116.85, "Chaozhou: gongfu tea", "#0e8f7e")
 ]);
 
+// Reservoir extent: real inundation footprint computed from SRTM (Feb 2000, pre-impoundment DEM)
+// by scripts/build_inundation.py — blue = pool at 145 m (summer), orange = extra land drowned at 175 m (winter)
+const RESERVOIR_BOUNDS = [[[31.05293, 106.17188], [31.80289, 111.44531]], [[30.29702, 106.17188], [31.05293, 111.44531]], [[29.53523, 106.17188], [30.29702, 111.44531]], [[28.76766, 106.17188], [29.53523, 111.44531]]];
+const reservoirLayer = L.layerGroup(RESERVOIR_BOUNDS.map((b, i) =>
+  L.imageOverlay(`reservoir-strip-${i}.png`, b, { interactive: false })));
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -715,19 +823,26 @@ const overlays = {
   yangtze: { layer: yangtzeLayer, chip: "tg-yangtze" },
   treaty: { layer: treatyLayer, chip: "tg-treaty" },
   food: { layer: cuisinesLayer, chip: "tg-food" },
-  tea: { layer: teaLayer, chip: "tg-tea" }
+  tea: { layer: teaLayer, chip: "tg-tea" },
+  profile: { el: "profile", chip: "tg-profile" },
+  resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
   const o = overlays[id];
   if (!o) return;
-  if (on) { o.layer.addTo(map); document.getElementById(o.chip).classList.add("on"); }
-  else { map.removeLayer(o.layer); document.getElementById(o.chip).classList.remove("on"); }
+  if (o.layer) { if (on) o.layer.addTo(map); else map.removeLayer(o.layer); }
+  if (o.el) document.getElementById(o.el).classList.toggle("visible", on);
+  document.getElementById(o.chip).classList.toggle("on", on);
   if (id === "terrain") { terrainOn = on; applyStyles(); }
   if (id === "satellite") { satOn = on; applyStyles(); }
 }
+function overlayIsOn(o) {
+  if (o.layer) return map.hasLayer(o.layer);
+  return document.getElementById(o.el).classList.contains("visible");
+}
 Object.entries(overlays).forEach(([id, o]) => {
   document.getElementById(o.chip).onclick = () => {
-    const on = !map.hasLayer(o.layer);
+    const on = !overlayIsOn(o);
     logEvent("overlay", id + " " + (on ? "on" : "off"));
     setOverlay(id, on);
   };
