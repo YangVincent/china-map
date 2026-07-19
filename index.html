@@ -554,6 +554,12 @@ function geoRiverMulti(segs, tip, opts) {
 function riverMainSeg(key) {
   return RIVERS[key].reduce((a, b) => (b.length > a.length ? b : a), RIVERS[key][0]);
 }
+// Slice a river's main segment between two latitudes, normalized north→south (for composing routes along real geometry)
+function riverSlice(key, latHi, latLo) {
+  const seg = riverMainSeg(key).slice();
+  if (seg[0][0] < seg[seg.length - 1][0]) seg.reverse();
+  return seg.filter(p => p[0] <= latHi && p[0] >= latLo);
+}
 // Flow arrow snapped to the nearest real river vertex, oriented by the local downstream direction
 function flowArrowNear(key, lat, lng, color) {
   let bestD = Infinity, bestSeg = null, bestI = 0;
@@ -831,10 +837,14 @@ const railLayer = L.layerGroup([
 const porcelainLayer = L.layerGroup([
   ...geoRiverMulti(RIVERS.gan, "Gan River 赣江 — Jiangxi's spine and the export highway south", { weight: 2 }),
   ...geoRiverMulti(RIVERS.bei, "Bei River 北江 — from Meiling Pass down to Guangzhou", { weight: 2 }),
-  ...arrowPath([[29.27,117.18],[29.1,116.95],[29.0,116.67],[29.45,116.35],[29.73,116.22],[30.05,116.35]], "#0e8f7e",
-    "Tribute route: down the Chang River, across Poyang Lake, out at Hukou into the Yangtze — then downstream and up the Grand Canal to the court (toggle Yangtze & Canal for the rest)"),
-  ...arrowPath([[28.95,116.5],[28.68,115.89],[27.5,115.2],[26.5,115.05],[25.85,114.93],[25.6,114.6],[25.32,114.42],[25.0,114.2],[24.81,113.6],[24.2,113.3],[23.7,113.03],[23.13,113.26],[22.6,113.7],[21.8,114.3],[20.8,114.9]], "#b8860b",
-    "Export route: up the Gan, porters over Meiling Pass — the single portage between the Yangtze and Pearl watersheds — down the Bei to Canton, then the ocean: Southeast Asia, India, Ottoman courts, Europe"),
+  ...arrowPath([[29.27,117.18],[29.20,117.05],[29.05,116.85],[28.98,116.70],[29.12,116.60],[29.35,116.48],[29.55,116.35],[29.73,116.22],[30.02,116.30]], "#0e8f7e",
+    "Tribute route: from Jingdezhen's wharf down the Chang River, across Poyang Lake, out at Hukou into the Yangtze — then downstream and up the Grand Canal to the court (toggle Yangtze & Canal for the rest)"),
+  ...arrowPath([[29.27,117.18],[29.20,117.05],[29.05,116.85],[28.95,116.60],[28.83,116.30],[28.68,115.89]]
+      .concat(riverSlice("gan", 28.55, 25.9))
+      .concat([[25.85,114.93],[25.60,114.60],[25.39,114.36],[25.26,114.40],[25.12,114.31],[24.95,114.05],[24.81,113.60]])
+      .concat(riverSlice("bei", 24.7, 23.55))
+      .concat([[23.40,113.10],[23.13,113.26],[22.75,113.60],[22.2,113.9],[21.3,114.4],[20.6,114.9]]), "#b8860b",
+    "Export route: same wharf, opposite direction — across Poyang, up the Gan (real river geometry), porters over Meiling Pass (schematic portage), down the Bei (real) to Canton, then the ocean: Southeast Asia, India, Ottoman courts, Europe"),
   geoDot(25.32, 114.42, "Meiling Pass 梅关 — the porters' saddle between the two great river systems; for centuries, most of the world's porcelain crossed this one hill on shoulder poles", "#b8860b"),
   geoLabel(25.6, 114.75, "Meiling Pass", "#b8860b"),
   geoLabel(30.0, 117.4, "tribute → Beijing", "#0e8f7e"),
