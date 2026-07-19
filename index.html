@@ -165,6 +165,7 @@
   <span class="chip" id="tg-ctib">Cultural Tibet</span>
   <span class="chip" id="tg-medog">Medog dam</span>
   <span class="chip" id="tg-vajra">Vajrayana world</span>
+  <span class="chip" id="tg-800ce">Empires ~800 CE</span>
   <span class="chip" id="tg-resext">Reservoir extent</span>
   <span class="chip" id="tg-reset">Reset view</span>
 </div>
@@ -1176,6 +1177,29 @@ const vajrayanaLayer = L.layerGroup([
   geoLabel(46.7, 43.6, "Kalmykia — Buddhist Europe", "#b45309")
 ]);
 
+// Empires c. 800 CE: the Tibetan Empire at its height and its neighbours (approximate, schematic — historical borders fluctuated)
+function empirePoly(pts, color, tip) {
+  const p = L.polygon(smoothClosed(pts), { color: color, weight: 2, fillColor: color, fillOpacity: 0.14 });
+  p.bindTooltip(tip, { sticky: true, className: "prov-tip" });
+  return p;
+}
+const empires800Layer = L.layerGroup([
+  empirePoly([[37.5,74],[39,77],[39.5,80],[40,84],[40.3,88],[40,92],[40.3,96],[39.3,99.5],[38,102.5],[36,103.5],[34,103.5],[32,102.5],[30,100.5],[28.3,98.8],[27.6,95.5],[28,92.5],[27.6,89],[28.3,85.5],[29.8,81.5],[31.8,79],[34,76],[36,74]], "#8e44ad",
+    "Tibetan Empire (Tubo) at its ~800 CE height — the whole plateau plus the southern Tarim (Kashgar, Khotan), the Hexi Corridor (taken from the Tang after 763), Kham, Nepal, and Ladakh. It sacked the Tang capital Chang'an in 763."),
+  empirePoly([[39.5,110],[40,114],[39.5,118],[38.5,121],[36.5,121.5],[34.5,120.5],[32,121.5],[29.5,122],[26.5,120.5],[24,118],[22.5,114],[21.5,110],[21,108],[18.8,106.5],[20.5,105],[22.5,104],[25,103.5],[27,103.5],[29.5,104],[31.5,105],[33.5,106.5],[34.5,105.5],[35.5,107.5],[37,109]], "#a32d2d",
+    "Tang China (~800 CE, after the An Lushan rebellion) — the eastern farming core, the Yangtze basin, the SE coast, Sichuan, and Annam (northern Vietnam). It had lost the west and the Silk Road to Tibet."),
+  empirePoly([[42,89],[44,91.5],[47,94.5],[49,99],[49.8,104],[49,109],[47,113],[44.5,113],[42.3,108],[41.3,101],[41.3,94]], "#2e6f9e",
+    "Uyghur Khaganate (744–840) — the Turkic steppe empire in Mongolia; a Tang ally that helped crush the An Lushan rebellion. Its people later migrated south into the Tarim (Stop 7's Uyghur history)."),
+  empirePoly([[28.5,98.5],[27.5,100.5],[26,103],[24,103.5],[22.5,102.5],[21.5,100],[22.5,98],[24.5,97],[26.5,97.5]], "#639922",
+    "Nanzhao (738–902) — the kingdom of Yunnan, playing Tang and Tibet against each other; ancestor-state of the later Dali Kingdom."),
+  geoLabel(33.0, 88.0, "Tibetan Empire", "#8e44ad"),
+  geoLabel(32.5, 116.0, "Tang China", "#a32d2d"),
+  geoLabel(46.5, 100.0, "Uyghur Khaganate", "#2e6f9e"),
+  geoLabel(24.5, 100.5, "Nanzhao", "#639922"),
+  geoLabel(41.5, 126.0, "Balhae →", "#5f5e5a"),
+  geoLabel(38.5, 74.0, "← Abbasid Caliphate", "#5f5e5a")
+]);
+
 // Terrain: hillshade basemap (real relief) + label overlay; region fills go translucent so mountains read through
 const terrainLayer = L.layerGroup([
   L.tileLayer("https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}",
@@ -1219,6 +1243,7 @@ const overlays = {
   culturaltibet: { layer: culturalTibetLayer, chip: "tg-ctib" },
   medog: { layer: medogLayer, chip: "tg-medog" },
   vajrayana: { layer: vajrayanaLayer, chip: "tg-vajra" },
+  empires800: { layer: empires800Layer, chip: "tg-800ce" },
   resext: { layer: reservoirLayer, chip: "tg-resext" }
 };
 function setOverlay(id, on) {
