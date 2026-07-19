@@ -17,10 +17,15 @@ Mandarin difficulty key: 🟢 clear/standard-ish · 🟡 accented but followable
 - **Qiandongnan loop (Guizhou)** — Kaili sour-soup fish at the source, then Miao villages (Xijiang Qianhu) and Dong villages (Zhaoxing) for the silver headdresses and UNESCO grand songs. Pair with the **FAST telescope** visitor area and **Huangguoshu falls**.
 - **Three Gorges cruise (Chongqing → Yichang, ~4 days downstream)** — through Qutang, Wu, and Xiling gorges, ending with the dam's five-step ship locks or the giant ship lift. The classic river journey, now on a reservoir. Book on Trip.com (~$400–900/pp, 5-star boats: Century/Victoria fleets); confirm the itinerary actually transits the locks or ship lift rather than bussing around the dam.
 - **Transiting the dam without a cruise** — Yichang-based day boats run lock/ship-lift transit trips (过闸体验) — the only scheduled way to physically ride through. Riding an actual freighter isn't bookable; it's the same business-channel play as the Yangshan port visit: a shipping line or forwarder invitation (COSCO's river fleet, or a logistics client visit) for a ride-along. Pair the ask if arranging the port visit.
+- **Snowboarding in China** — Chongli 崇礼 (the 2022 Olympic snow cluster: Thaiwoo, Genting, Fulong resorts; ~1h by HSR from Beijing; Nobaday flagship stores and full guochao snow culture) + **Altay, Xinjiang** (claimed 10,000-year birthplace of skiing via cave paintings; China's powder frontier — Jikepulin/General's Mountain, long cold-smoke season).
 - **Middle Yangtze culture run** — Hubei Provincial Museum, Wuhan (the Marquis Yi bells, 433 BC, with live performances) + Wuchang Uprising memorial ("Red Chamber"); Hunan Museum, Changsha (Mawangdui: Lady Dai and the Chu-cosmos silk banners); **Jingdezhen** (Taoxichuan art district in the converted kilns, Imperial Kiln Museum, weekend ceramics markets — worth 2 days).
 
 ## Foundations / all-China
 
+### Cultural touchstones
+- **Guochao 国潮 ("national wave")** — the defining consumer-culture shift of recent years: Chinese Gen-Z deciding that Chinese aesthetics and brands are the cool ones. Usual origin marker: Li-Ning's 2018 "China Li-Ning" streetwear show at Paris Fashion Week. Now spans hanfu revival, Forbidden City merchandise, domestic cosmetics beating French houses, Black Myth: Wukong, the tea-culture renaissance — and the business model of Jingdezhen's young ceramicists.
+
+### Read
 - **_Against the Law: Labor Protests in China's Rustbelt and Sunbelt_** — Ching Kwan Lee. The definitive scholarly book comparing Northeast (rustbelt) and Guangdong (sunbelt) labor politics; covers Liaoyang 2002 in depth.
 - **_Paying the Price: Worker Unrest in Northeast China_** — Human Rights Watch report (2002), free online. The primary documentation of the Liaoyang and Daqing protests.
 
