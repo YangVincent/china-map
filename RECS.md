@@ -98,4 +98,18 @@ Mandarin difficulty key: 🟢 clear/standard-ish · 🟡 accented but followable
 ## Central — (to fill)
 ## Southwest — (to fill)
 ## Northwest — (to fill)
-## Tibet — (to fill)
+
+## Tibet
+
+### Watch — the Tibetan New Wave (all Tibetan-language, insider perspective)
+- 🟡 **《气球》 Balloon** (Pema Tseden, 2019) — best entry point: a herding family caught between the one-child policy, contraception, and reincarnation belief. Gorgeous, humane, quietly devastating.
+- 🟡 **《撞死了一只羊》 Jinpa** (Pema Tseden, 2018, produced by Wong Kar-wai) — a trucker, a hitchhiker, and a killing on the Kekexili plateau; dreamlike.
+- 🟡 **《塔洛》 Tharlo** (Pema Tseden, 2015) — a shepherd gets an ID card and loses himself; black-and-white, deadpan.
+- 🔴 **《冈仁波齐》 Paths of the Soul** (Zhang Yang, 2015) — a village's year-long full-body-prostration pilgrimage to Lhasa and Kailash; near-documentary, minimal dialogue.
+- Pema Tseden 万玛才旦 (1969–2023, from Amdo) founded Tibetan-language cinema and mentored the new wave (Sonthar Gyal, his son Jigme Trinley) before his sudden death.
+
+### Read / listen
+- **Tsering Woeser 唯色** — the dissident Tibetan poet-blogger (writes in Chinese, censored); _Tibet on Fire_ documents the self-immolations.
+- **Alai 阿来** — Tibetan novelist writing in Chinese; _Red Poppies_ (Mao Dun Prize).
+- **ANU** — Tibetan pop duo (viral "Fly"); plus a real Tibetan-language hip-hop scene rapping about identity.
+- **_A Tibetan Revolutionary_ / Melvyn Goldstein's histories** — the standard scholarly account of 20th-c. Tibet; Goldstein also wrote the classic anthropology of Tibetan fraternal polyandry.
